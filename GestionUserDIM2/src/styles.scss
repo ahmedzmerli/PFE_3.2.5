@@ -1,0 +1,55 @@
+/* You can add global styles to this file, and also import other style files */
+@import "bootstrap";
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+@import 'assets/sakai/layout';
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// 🔴 Hover rouge Ooredoo sur sidebar
+.layout-menu a:hover {
+  background-color: #ffe6e6 !important; // fond léger rouge
+  color: #e60000 !important; // texte rouge
+}
+
+.layout-menu a:hover i {
+  color: #e60000 !important;
+}
+
+.layout-menu a.active-route {
+  color: #e60000 !important;
+  font-weight: 700;
+}
+
+/* ✅ Case cochée : fond rouge Ooredoo */
+.p-checkbox-box.p-highlight {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+}
+
+/* ✅ Icône de coche blanche */
+.p-checkbox-box.p-highlight .p-checkbox-icon {
+  color: white !important;
+}
+
+/* ✅ Bordure rouge même non cochée */
+.p-checkbox-box {
+  border-color: #dc3545 !important;
+}
+
+/* ✅ Texte du label quand coché */
+.p-checkbox-box.p-highlight ~ label {
+  color: #dc3545 !important;
+  font-weight: bold;
+}
+
+
+
+.swal2-container {
+  z-index: 1100 !important; // supérieur à celui de PrimeNG (z-index: 1000+)
+}
+
+

@@ -1,0 +1,66 @@
+.chat-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(200, 0, 0, 0.2);
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.chat-title {
+  color: #d71920; /* Rouge Ooredoo */
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.chat-box {
+  height: 300px;
+  overflow-y: auto;
+  border: 1px solid #d71920;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: #f9f9f9;
+}
+
+.chat-message {
+  margin: 5px 0;
+  font-size: 15px;
+}
+
+.chat-sender {
+  font-weight: bold;
+  color: #d71920;
+  margin-right: 5px;
+}
+
+.chat-content {
+  color: #333;
+}
+
+.chat-input {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-input input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #d71920;
+  border-radius: 5px;
+}
+
+.chat-input button {
+  padding: 10px 15px;
+  background: #d71920;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.chat-input button:hover {
+  background: #b4141c;
+}

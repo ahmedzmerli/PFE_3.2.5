@@ -1,0 +1,69 @@
+<div class="container mt-4">
+  <h2 class="text-danger fw-bold mb-4">
+    <i class="pi pi-history me-2"></i> Historique des actions PDV
+  </h2>
+
+  <!-- 🔧 Sélecteur de colonnes -->
+  <div class="text-center mb-4">
+    <h6 class="text-secondary fw-semibold mb-2">Sélection des colonnes à afficher</h6>
+    <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
+      <p-multiSelect
+        [options]="cols"
+        [(ngModel)]="selectedColumns"
+        optionLabel="header"
+        placeholder="Afficher colonnes"
+        display="chip"
+        class="p-multiselect-sm border border-danger rounded-1 shadow-sm"
+        style="min-width: 250px;"
+      ></p-multiSelect>
+      <button
+        pButton
+        label="Réinitialiser colonnes"
+        icon="pi pi-refresh"
+        class="p-button-sm p-button-text text-danger"
+        (click)="resetColumns()"
+      ></button>
+    </div>
+  </div>
+
+  <!-- 🔍 Barre de recherche -->
+  <div class="card border-0 shadow-sm p-3 mb-4 bg-light">
+    <div class="row g-3 align-items-end">
+      <div class="col-md-6 col-lg-4 mx-auto">
+        <label class="form-label fw-semibold text-dark">Rechercher MSISDN</label>
+        <div class="input-group">
+          <span class="input-group-text bg-danger text-white"><i class="pi pi-search"></i></span>
+          <input
+            type="text"
+            pInputText
+            [(ngModel)]="msisdn"
+            (input)="applyFilter()"
+            class="form-control border-danger"
+            placeholder="Ex: 22211234"
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau des résultats -->
+  <p-table [value]="filteredResults" [columns]="selectedColumns"
+           [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
+           [scrollable]="true" scrollHeight="400px"
+           class="p-datatable-sm shadow-sm border rounded">
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns">{{ col.header }}</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <ng-container *ngFor="let col of columns">
+          <td>
+            {{ rowData[col.field] }}
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

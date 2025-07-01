@@ -1,0 +1,64 @@
+/* 🔒 Email input style */
+input.form-control {
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 50rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* ✅ Unifier style avec p-password */
+::ng-deep .p-password {
+  width: 100%;
+}
+
+::ng-deep .p-password input.form-control {
+  background-color: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 50rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  width: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* 👁️ Icone de visibilité alignée */
+::ng-deep .p-password .p-password-icon {
+  right: 1.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #888;
+  position: absolute;
+}
+
+/* 🚫 Bordure rouge si invalide */
+::ng-deep .p-password.is-invalid input {
+  border-color: #dc3545 !important;
+}
+.login-page-wrapper {
+  background: linear-gradient(145deg, #d93939, #ffffff);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+
+  &::before {
+    content: "";
+    background-image: url('/assets/img/ooredoo-logo.png');
+    background-repeat: no-repeat;
+    background-size: 130%; // ajuste la taille à ta convenance
+    background-position: center center; // 💡 centrage horizontal + vertical
+    opacity: 0.06; // léger pour que ça ne dérange pas
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .login-card {
+    background: rgba(255, 255, 255, 0.95);
+    position: relative;
+    z-index: 1;
+  }
+}

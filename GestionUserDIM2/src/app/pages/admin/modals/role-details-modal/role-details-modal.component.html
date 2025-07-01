@@ -1,0 +1,30 @@
+<p-dialog [(visible)]="visible"
+          [modal]="true"
+          [style]="{ width: '500px' }"
+          [closable]="true"
+          [dismissableMask]="true"
+          header="Détails du rôle">
+
+  <ng-container *ngIf="permissionLists && permissionLists.length > 0; else empty">
+    <div class="mb-3">
+      <h6 class="fw-bold text-danger">Listes de permissions associées :</h6>
+      <ul class="list-group">
+        <li *ngFor="let pl of uniquePermissionLists" class="list-group-item d-flex justify-content-between align-items-center">
+          {{ pl.name }}
+          <span class="badge bg-light text-dark border shadow-sm">{{ pl.permissions?.length}}</span>
+        </li>
+      </ul>
+    </div>
+  </ng-container>
+
+  <ng-template #empty>
+    <div class="text-center text-muted">
+      <i class="pi pi-info-circle"></i> Aucune liste de permissions associée.
+    </div>
+  </ng-template>
+
+  <div class="d-flex justify-content-end mt-3">
+    <button pButton type="button" icon="pi pi-times" label="Fermer" class="p-button-secondary" (click)="close()"></button>
+  </div>
+
+</p-dialog>
