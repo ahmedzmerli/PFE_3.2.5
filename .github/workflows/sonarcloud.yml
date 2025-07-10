@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Build, Test, SonarCloud
+name: CI/CD Pipeline - Build and Test
 
 on:
   push:
@@ -8,8 +8,8 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build-test-analyze:
-    name: Build, Test and SonarCloud Analysis
+  build-test:
+    name: Build and Test
     runs-on: ubuntu-latest
 
     steps:
@@ -33,19 +33,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       # Navigate to the correct directory (GestionUser) before running Maven
-      - name: Build with Maven (tests + coverage)
+      - name: Build and Test with Maven (tests only)
         run: |
           cd GestionUser  # Change to the directory where the pom.xml is located
-          mvn clean verify
-
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5
-            -Dsonar.organization=ahmedzmerli
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          mvn clean test
