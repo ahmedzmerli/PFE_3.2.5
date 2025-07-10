@@ -26,6 +26,11 @@ public class JimDashboardService {
     @PersistenceContext
     private EntityManager entityManager;
 
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+
     public List<JimDashboard> searchDashboard(
             String msisdn,
             String hotline,

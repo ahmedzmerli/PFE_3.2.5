@@ -1,5 +1,6 @@
 package com.example.GestionUser.entities.jim;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import java.time.LocalDateTime;
 @Data
 public class JimDashboard {
     @Id
+    @Column(name = "CALL_ID")
     private String CALLID;
     private String CONNID;
     private String AGENT;

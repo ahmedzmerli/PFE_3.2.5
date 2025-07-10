@@ -121,6 +121,15 @@ public ResponseEntity<ExceptionResponse> handleForbidden(AccessDeniedException e
 }
 
 
-
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<ExceptionResponse> handleApiException(ApiException ex) {
+        return ResponseEntity.status(ex.getStatus()).body(
+                ExceptionResponse.builder()
+                        .businessErrorCode(ex.getCode())
+                        .businessErrorDescription(ex.getMessage())
+                        .error(ex.getMessage())
+                        .build()
+        );
+    }
 
 }

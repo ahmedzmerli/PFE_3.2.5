@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class UserController {
 
 
 
-
+    @Transactional
     @DeleteMapping("/users/{id}")
     @PreAuthorize("hasAuthority('users.delete')")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
@@ -117,6 +118,7 @@ public ResponseEntity<User> getUserById(@PathVariable Integer id) {
 }
 
 
+    @Transactional
     @PostMapping("/users/{userId}/roles/{roleId}")
     @PreAuthorize("hasAuthority('users.roles.create')")
     public ResponseEntity<?> addRoleToUser(@PathVariable Integer userId, @PathVariable Integer roleId) {
@@ -133,6 +135,7 @@ public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         );
     }
 
+    @Transactional
     @DeleteMapping("/users/{userId}/roles/{roleId}")
     @PreAuthorize("hasAuthority('users.roles.delete')")
 
