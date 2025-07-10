@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # Vérifie le dépôt
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v4  # Configure JDK 17
         with:
           distribution: temurin
           java-version: 17
@@ -27,13 +27,13 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/.m2/repository
+            ~/.m2/repository  # Cache les dépendances Maven
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Navigate to the correct directory (GestionUser) before running Maven
+      # Exécuter les tests Maven
       - name: Build and Test with Maven (tests only)
         run: |
-          cd GestionUser  # Change to the directory where the pom.xml is located
-          mvn clean test
+          cd GestionUser  # Changez de répertoire pour le dossier contenant le pom.xml
+          mvn clean test  # Exécutez les tests dans le répertoire "GestionUser"
