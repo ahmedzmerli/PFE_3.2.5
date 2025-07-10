@@ -1,13 +1,11 @@
-name: CI/CD Pipeline - Build, Test, SonarCloud Analysis
+name: CI/CD Pipeline - Build, Test, SonarCloud
 
 on:
   push:
     branches:
       - main
   pull_request:
-    branches:
-      - main
-  workflow_dispatch:
+    types: [opened, synchronize, reopened]
 
 jobs:
   build-test-analyze:
@@ -15,37 +13,37 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Set up Java JDK 17 (or your Java version)
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: 17
 
-      # Cache Maven dependencies for faster builds
+      # Cache Maven dependencies
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
-          path: ~/.m2/repository
+          path: |
+            ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Build the project with Maven, including tests and coverage
+      # Navigate to the correct directory (GestionUser) before running Maven
       - name: Build with Maven (tests + coverage)
-        run: mvn clean verify
+        run: |
+          cd GestionUser  # Change to the directory where the pom.xml is located
+          mvn clean verify
 
-      # Run SonarCloud analysis
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5
+            -Dsonar.projectKey=GestionUser
             -Dsonar.organization=ahmedzmerli
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
