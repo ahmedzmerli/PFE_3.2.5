@@ -39,7 +39,7 @@ jobs:
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.projectKey=GestionUser
+            -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5
             -Dsonar.organization=ahmedzmerli
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
