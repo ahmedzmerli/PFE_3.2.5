@@ -9,6 +9,8 @@ import com.example.GestionUser.repositories.PermissionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +19,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
+//@SpringBootTest
+//@ActiveProfiles("test")
 
 class PermissionListServiceTest {
 

@@ -54,3 +54,51 @@ public class JimDashboardDataSourceConfig {
         return new JpaTransactionManager(jimEntityManagerFactory);
     }
 }
+
+
+//@Configuration
+//@EnableTransactionManagement
+//@EnableJpaRepositories(
+//        basePackages = "com.example.GestionUser.repositories.jim",
+//        entityManagerFactoryRef = "jimEntityManagerFactory",
+//        transactionManagerRef = "jimTransactionManager"
+//)
+//public class JimDashboardDataSourceConfig {
+//
+//    @Bean(name = "jimDataSource")
+//    @ConfigurationProperties(prefix = "spring.jimdashboard.datasource")
+//    public DataSource jimDataSource() {
+//        return DataSourceBuilder.create().build();
+//    }
+//
+//    @Bean(name = "jimEntityManagerFactory")
+//    public LocalContainerEntityManagerFactoryBean jimEntityManagerFactory(
+//            EntityManagerFactoryBuilder builder,
+//            @Qualifier("jimDataSource") DataSource jimDataSource
+//    ) {
+//        HashMap<String, Object> properties = new HashMap<>();
+//
+//        String activeProfile = System.getProperty("spring.profiles.active");
+//        if ("test".equals(activeProfile)) {
+//            properties.put("hibernate.hbm2ddl.auto", "create-drop");
+//            properties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+//        } else {
+//            properties.put("hibernate.hbm2ddl.auto", "update");
+//            properties.put("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
+//        }
+//
+//        return builder
+//                .dataSource(jimDataSource)
+//                .packages("com.example.GestionUser.entities.jim")
+//                .persistenceUnit("jimDashboard")
+//                .properties(properties)
+//                .build();
+//    }
+//
+//    @Bean(name = "jimTransactionManager")
+//    public PlatformTransactionManager jimTransactionManager(
+//            @Qualifier("jimEntityManagerFactory") EntityManagerFactory jimEntityManagerFactory
+//    ) {
+//        return new JpaTransactionManager(jimEntityManagerFactory);
+//    }
+//}
