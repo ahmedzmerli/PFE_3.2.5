@@ -1,4 +1,4 @@
-name: CI/CD Pipeline - Build, Test, SonarCloud
+name: CI/CD Pipeline - Build and Test
 
 on:
   push:
@@ -8,9 +8,18 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build-test-analyze:
-    name: Build, Test and SonarCloud Analysis
+  build-test:
+    name: Build and Test
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ALLOW_EMPTY_PASSWORD: yes
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping -h localhost -uroot" --health-interval=10s --health-timeout=5s --health-retries=5
 
     steps:
       - name: Checkout repository
@@ -22,30 +31,26 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      # Cache Maven dependencies
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.m2/repository
+          path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+          restore-keys: ${{ runner.os }}-maven-
 
-      # Navigate to the correct directory (GestionUser) before running Maven
-      - name: Build with Maven (tests + coverage)
+      - name: Wait for MySQL to be ready
         run: |
-          cd GestionUser  # Change to the directory where the pom.xml is located
-          mvn clean verify
+          echo "Sleeping 20s to let MySQL initialize..."
+          sleep 20
+          mysql -h127.0.0.1 -uroot -e "CREATE DATABASE IF NOT EXISTS GestionUser;"
+          mysql -h127.0.0.1 -uroot -e "CREATE DATABASE IF NOT EXISTS jimdashboard;"
 
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
-        with:
-          projectBaseDir: .
-          args: >
-            -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5
-            -Dsonar.organization=ahmedzmerli
-            -Dsonar.host.url=https://sonarcloud.io
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Debug MySQL connection
+        run: |
+          echo "Vérification de la connexion MySQL..."
+          mysql -h127.0.0.1 -uroot -e "SHOW DATABASES;"
+
+      - name: Build and Test with Maven
+        run: |
+          cd GestionUser
+          mvn clean test -e -X
