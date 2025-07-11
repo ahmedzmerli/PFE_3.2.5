@@ -45,6 +45,11 @@ jobs:
           mysql -h127.0.0.1 -uroot -e "CREATE DATABASE IF NOT EXISTS GestionUser;"
           mysql -h127.0.0.1 -uroot -e "CREATE DATABASE IF NOT EXISTS jimdashboard;"
 
+      - name: Debug MySQL connection
+        run: |
+          echo "Vérification de la connexion MySQL..."
+          mysql -h127.0.0.1 -uroot -e "SHOW DATABASES;"
+
       - name: Build and Test with Maven
         run: |
           cd GestionUser
