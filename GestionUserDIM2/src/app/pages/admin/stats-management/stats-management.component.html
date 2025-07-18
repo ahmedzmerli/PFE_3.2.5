@@ -1,0 +1,76 @@
+<div class="container mt-4">
+  <h2 class="text-danger fw-bold mb-4">
+    <i class="pi pi-chart-bar me-2"></i>  Statistiques
+  </h2>
+  <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+  <div class="row g-4">
+    <!-- Blacklist par Mois (Bar) -->
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4 h-100">
+        <h5 class="text-danger mb-3"><i class="pi pi-ban"></i> Blacklist par Mois</h5>
+        <canvas *ngIf="!loadingBlacklist" baseChart
+                [datasets]="[{ data: blacklistMonthData, label: 'Blacklistés', backgroundColor: '#dc3545' }]"
+                [labels]="blacklistMonthLabels"
+                [options]="{ responsive: true }"
+                [legend]="true"
+                chartType="bar">
+        </canvas>
+        <div *ngIf="loadingBlacklist" class="text-center">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #dc3545"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Whitelist par Mois (Line) -->
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4 h-100">
+        <h5 class="text-success mb-3"><i class="pi pi-check"></i> Whitelist par Mois</h5>
+        <canvas *ngIf="!loadingWhitelist" baseChart
+                [datasets]="[{ data: whitelistMonthData, label: 'Whitelisted', borderColor: '#28a745', fill: false }]"
+                [labels]="whitelistMonthLabels"
+                [options]="{ responsive: true }"
+                [legend]="true"
+                chartType="line">
+        </canvas>
+        <div *ngIf="loadingWhitelist" class="text-center">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #28a745"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Blacklist par Segment (Pie) -->
+
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4 h-100">
+        <h5 class="text-primary mb-3"><i class="pi pi-chart-pie"></i> Blacklist par Segment</h5>
+        <canvas *ngIf="!loadingSegment" baseChart
+                [data]="pieChartData"
+                [options]="pieChartOptions"
+                [type]="'pie'">
+        </canvas>
+        <div *ngIf="loadingSegment" class="text-center">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #007bff"></i>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Blacklist par Utilisateur (Horizontal Bar) -->
+    <div class="col-md-6">
+      <div class="card shadow-sm p-4 h-100">
+        <h5 class="text-warning mb-3"><i class="pi pi-users"></i> Blacklist par Utilisateur</h5>
+        <canvas *ngIf="!loadingUser" baseChart
+                [datasets]="[{ data: userData, label: 'Actions Blacklist', backgroundColor: '#ffc107' }]"
+                [labels]="userLabels"
+                [options]="{ responsive: true, indexAxis: 'y' }"
+                [legend]="true"
+                chartType="bar">
+        </canvas>
+        <div *ngIf="loadingUser" class="text-center">
+          <i class="pi pi-spin pi-spinner" style="font-size: 2rem; color: #ffc107"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

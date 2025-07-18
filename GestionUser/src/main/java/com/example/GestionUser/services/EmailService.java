@@ -34,11 +34,11 @@ public class EmailService {
             String activationCode,
             String subject
     ) throws MessagingException {
-        String templateName;
+        String templateName ;
         if (emailTemplate == null) {
             templateName = "confirm-email";
         } else {
-            templateName = emailTemplate.name();
+            templateName = emailTemplate.getName();
         }
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(

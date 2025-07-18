@@ -1,0 +1,24 @@
+<p-dialog [(visible)]="visible"
+          (onHide)="close()"
+          [modal]="true"
+          [style]="{ width: '600px' }"
+          header="Détails de la liste"
+          [closable]="true">
+
+  <div *ngIf="groupedPermissions.length > 0">
+    <div *ngFor="let group of groupedPermissions" class="mb-3">
+      <h6 class="text-danger">{{ getGroupLabel(group.feature) }}</h6>
+      <ul class="list-unstyled ms-3">
+        <li *ngFor="let perm of group.permissions"
+            class="border rounded px-2 py-1 me-2 mb-2 d-inline-block bg-light text-dark fw-medium shadow-sm">
+          {{ getFriendlyLabel(perm) }}
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <p-message *ngIf="groupedPermissions.length === 0"
+             severity="info"
+             text="Aucune permission assignée à cette liste.">
+  </p-message>
+</p-dialog>

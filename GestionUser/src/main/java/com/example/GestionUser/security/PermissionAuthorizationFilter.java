@@ -31,25 +31,22 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
 
-        String uri = request.getServletPath(); // utilisé pour logs et contrôle
-        String fullPath = request.getRequestURI(); // utilisé pour les exclusions précises
+        String uri = request.getServletPath();
+        String fullPath = request.getRequestURI();
 
-        // 🔓 Skip security checks for public endpoints and static/sockjs
+        // ✅ Skip endpoints publics et fichiers statiques
         if (
-
+                fullPath.equals("/") ||
+                        fullPath.equals("/error") ||
                         fullPath.equals("/favicon.ico") ||
                         fullPath.equals("/index.html") ||
-                                fullPath.matches(".*\\.(js|css|png|jpg|jpeg|svg)$") ||// ✅ AJOUT ICI
+                        fullPath.matches(".*\\.(js|css|png|jpg|jpeg|svg|ico|woff2)$") ||
+                        fullPath.startsWith("/assets/") ||
                         fullPath.startsWith("/ws") ||
-
-                        fullPath.startsWith("/sockjs-node") || // utile en dev Angular
+                        fullPath.startsWith("/sockjs-node") ||
                         fullPath.startsWith("/api/v1/auth") ||
                         fullPath.startsWith("/api/v1/permissions") ||
-                        fullPath.equals("/api/v1/fix-admin")
-//                                ||
-////                        fullPath.equals("/error")
-
-//                        fullPath.equals("/api/chat/history")
+                        fullPath.startsWith("/api/v1/fix-admin")
         ) {
             filterChain.doFilter(request, response);
             return;
@@ -64,6 +61,11 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
             String action = mapHttpToAction(method);
             String requiredPermission = feature + "." + action;
 
+            if (requiredPermission == null || requiredPermission.isBlank() || requiredPermission.startsWith("unknown.")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             Set<String> userPermissions = authentication.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .collect(Collectors.toSet());
@@ -72,16 +74,12 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
             log.info("🔐 Required: {}", requiredPermission);
             log.info("✅ User Permissions: {}", userPermissions);
 
-            // ✅ TEMP FIX : bypass for permissionlists.create (debug)
+            // TEMP FIX spécifique
             if (uri.equals("/api/v1/permission-lists") && method.equals("post")) {
                 if (!userPermissions.contains("permissionlists.create")) {
-                    log.warn("❌ Missing permissionlists.create for POST");
                     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
                     response.setContentType("application/json");
                     response.getWriter().write("{\"error\": \"Missing permission: permissionlists.create\"}");
-                    return;
-                } else {
-                    filterChain.doFilter(request, response);
                     return;
                 }
             }
@@ -116,9 +114,9 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
             }
         }
 
-        if (logicalParts.isEmpty()) return "unknown";
+        if (logicalParts.isEmpty()) return "";
 
-        return String.join(".", logicalParts.subList(0, Math.min(2, logicalParts.size()))); // ex: "blacklist.toggle"
+        return String.join(".", logicalParts.subList(0, Math.min(2, logicalParts.size())));
     }
 
     private String mapHttpToAction(String method) {

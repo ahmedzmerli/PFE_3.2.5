@@ -147,8 +147,10 @@ public class GestionUserApplication {
 									.enabled(true)
 									.account_locked(false)
 									.roles(new HashSet<>())
+									.tokens(new ArrayList<>()) // ✅ ADD THIS LINE
 									.build()
 					));
+
 
 			if (admin.getRoles().stream().noneMatch(r -> "ADMIN".equals(r.getName()))) {
 				admin.getRoles().add(adminRole);

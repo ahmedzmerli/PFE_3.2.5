@@ -1,0 +1,45 @@
+<div class="container mt-4">
+  <div class="card shadow-sm border-0">
+    <div class="card-header bg-danger text-white d-flex align-items-center">
+      <i class="pi pi-envelope me-2"></i>
+      <h5 class="mb-0">Activation du compte</h5>
+    </div>
+
+    <div class="card-body">
+      <form [formGroup]="activationForm" (ngSubmit)="onSubmit()" class="mb-3">
+        <div class="mb-3">
+          <label class="form-label fw-semibold">Code d’activation</label>
+          <input
+            type="text"
+            maxlength="6"
+            pInputText
+            class="form-control"
+            formControlName="token"
+            [ngClass]="{ 'is-invalid': token.invalid && (token.dirty || token.touched) }"
+          />
+          <div *ngIf="token.invalid && (token.dirty || token.touched)" class="invalid-feedback">
+            <div *ngIf="token.errors?.['required']">Le code est requis.</div>
+            <div *ngIf="token.errors?.['minlength'] || token.errors?.['maxlength']">6 chiffres requis.</div>
+          </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center">
+          <button class="btn btn-success" type="submit" [disabled]="activationForm.invalid || loading">
+            <i class="pi pi-check me-1"></i> Valider
+          </button>
+
+          <button
+            class="btn btn-link text-danger"
+            type="button"
+            (click)="resendCode()"
+            [disabled]="!canResend || loading">
+            <i class="pi pi-refresh me-1"></i> Renvoyer le code {{ canResend ? '' : '(' + cooldown + 's)' }}
+          </button>
+        </div>
+      </form>
+
+      <div *ngIf="message" class="alert alert-success text-center">{{ message }}</div>
+      <div *ngIf="error" class="alert alert-danger text-center">{{ error }}</div>
+    </div>
+  </div>
+</div>

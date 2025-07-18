@@ -1,0 +1,87 @@
+<div class="modal-body" style="max-height: 70vh; overflow-y: auto;" @fadeInOut>
+
+
+<!-- bouton fermeture dans admin-layout -->
+
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-fluid">
+
+    <!-- 🔹 Nom du rôle -->
+    <div class="field">
+      <label for="name" class="fw-semibold text-danger"> Nom du rôle</label>
+      <input
+        pInputText
+        id="name"
+        formControlName="name"
+        [ngClass]="{ 'ng-invalid ng-dirty': form.get('name')?.invalid && form.get('name')?.touched }"
+      />
+      <small *ngIf="form.get('name')?.invalid && form.get('name')?.touched" class="p-error">
+        Le nom est requis (min. 3 caractères).
+      </small>
+    </div>
+
+    <!-- 🔘 Sélection globale -->
+    <!-- 🔘 Sélection globale -->
+<div class="d-flex justify-content-end gap-2 mb-3">
+  <button
+    pButton
+    type="button"
+    icon="pi pi-check"
+    label="Tout sélectionner"
+    class="btn btn-sm text-white"
+    style="background-color: #dc3545; border: none;"
+    (click)="selectAll()">
+  </button>
+
+  <button
+    pButton
+    type="button"
+    icon="pi pi-times"
+    label="Tout désélectionner"
+    class="btn btn-sm text-white"
+    style="background-color: #6c757d; border: none;"
+    (click)="deselectAll()">
+  </button>
+</div>
+
+
+    <!-- 📋 Liste des listes de permissions -->
+    <div *ngFor="let pl of permissionLists" class="p-card p-mb-3">
+      <div class="p-card-body d-flex align-items-center gap-2">
+        <p-checkbox
+          [inputId]="'pl-' + pl.id"
+          [value]="pl.id"
+          [(ngModel)]="selectedItems"
+          [ngModelOptions]="{ standalone: true }"
+        ></p-checkbox>
+        <label [for]="'pl-' + pl.id" class="mb-0 fw-medium">{{ pl.name }}</label>
+      </div>
+    </div>
+
+
+    <!--    &lt;!&ndash; ✅ Résumé sélection &ndash;&gt;-->
+<!--    <div class="p-mt-2">-->
+<!--      <p-message severity="info" *ngIf="selectedItems.length > 0"-->
+<!--                 text="{{ selectedItems.length }} liste(s) sélectionnée(s)">-->
+<!--      </p-message>-->
+<!--    </div>-->
+
+    <!-- ✔️ Soumission -->
+    <button
+      pButton
+      type="submit"
+      label="Créer le rôle"
+      icon="pi pi-check"
+      class="p-button p-button-danger p-button-rounded w-100 shadow-sm mt-3"
+      [disabled]="form.invalid || selectedItems.length === 0">
+    </button>
+
+  </form>
+
+
+
+  <!-- 🟢 Alertes -->
+  <p-message *ngIf="success" severity="success" text="✅ Rôle créé avec succès." class="p-mt-3" (click)="closeAlert()"></p-message>
+  <p-message *ngIf="error" severity="error" [text]="error" class="p-mt-3" (click)="closeAlert()"></p-message>
+
+</div>

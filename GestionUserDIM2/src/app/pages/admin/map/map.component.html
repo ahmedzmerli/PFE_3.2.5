@@ -1,0 +1,38 @@
+<!-- Tableau des PDVs -->
+<div class="table-responsive mb-4">
+  <table class="table table-bordered">
+    <thead>
+    <tr>
+      <th>MSISDN</th>
+      <th>Nom</th>
+      <th>Adresse</th>
+      <th>Code PDV</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let pdv of pdvs">
+      <td>{{ pdv.msisdn }}</td>
+      <td>{{ pdv.nomPdv }}</td>
+      <td>{{ pdv.adresse }}</td>
+      <td>{{ pdv.codePdv }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Bouton pour afficher la carte -->
+<div class="text-center mb-4">
+  <button class="btn btn-danger" (click)="toggleMap()">Afficher la carte</button>
+</div>
+
+<!-- Carte -->
+<div *ngIf="showMap" id="map" class="leaflet-map-container"></div>
+
+<!-- Détails -->
+<div *ngIf="selectedPdv" class="mt-4 border p-3 shadow">
+  <h5>Détails du PDV</h5>
+  <p><strong>MSISDN :</strong> {{ selectedPdv.msisdn }}</p>
+  <p><strong>Nom :</strong> {{ selectedPdv.nomPdv }}</p>
+  <p><strong>Adresse :</strong> {{ selectedPdv.adresse }}</p>
+  <p><strong>Code :</strong> {{ selectedPdv.codePdv }}</p>
+</div>

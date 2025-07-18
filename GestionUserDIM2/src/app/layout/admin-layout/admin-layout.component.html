@@ -1,0 +1,40 @@
+<!-- 🔄 Le layout Sakai (app-layout) gère déjà le sidebar et topbar -->
+
+<!-- 🔁 Zone dynamique de contenu -->
+<router-outlet></router-outlet>
+
+<!-- 🔷 Modal : Créer ou modifier une liste de permissions -->
+<app-permission-list-modal
+  *ngIf="showListModal$ | async"
+  #permissionListModalComponent
+  [isEdit]="isEditMode"
+  [editData]="selectedPermissionList"
+  (created)="onListUpdated()">
+</app-permission-list-modal>
+
+<!--&lt;!&ndash; 🔷 Modal : Créer ou modifier un rôle &ndash;&gt;-->
+<!--<app-role-modal-->
+<!--  *ngIf="permissionModalService.showRoleModal$ | async"-->
+<!--  (created)="onRoleUpdated()">-->
+<!--</app-role-modal>-->
+
+
+<!-- 🔷 Modal : Créer ou modifier un rôle -->
+<p-dialog [(visible)]="showRoleDialog"
+          [modal]="true"
+          [style]="{ width: '500px' }"
+          [closable]="true"
+          [dismissableMask]="true"
+          [header]="isEditRoleMode ? 'Modifier un rôle' : 'Créer un nouveau rôle'">
+  <app-role-modal
+    *ngIf="showRoleDialog"
+    [isEdit]="isEditRoleMode"
+    [editData]="selectedRole"
+    (created)="onRoleUpdated()">
+  </app-role-modal>
+</p-dialog>
+
+
+
+<!-- 🔷 Confirmation dialog de PrimeNG -->
+<p-confirmDialog></p-confirmDialog>
