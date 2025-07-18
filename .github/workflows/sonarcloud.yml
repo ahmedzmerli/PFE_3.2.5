@@ -43,6 +43,6 @@ jobs:
         run: |
           echo "Waiting for backend to start..."
           sleep 30
-          curl --fail http://localhost:8081/api/v1/auth/health || exit 1
+          curl --fail http://localhost:8081/api/v1/auth/health || exit 1 
 
       
