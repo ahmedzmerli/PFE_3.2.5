@@ -49,7 +49,7 @@ public interface BlHistoryRepository extends JpaRepository<BlHistory, Long> {
 
 
     @Query(value = "SELECT DATE_FORMAT(b.date_action, '%Y-%m') AS mois, COUNT(*) AS count " +
-            "FROM bl_history b " +
+            "FROM BL_HISTORY  b " +
             "WHERE b.statubl = 'BLACKLISTED' AND b.date_action >= :start " +
             "GROUP BY mois ORDER BY mois", nativeQuery = true)
     List<Map<String, Object>> countBlacklistByMonth(@Param("start") LocalDateTime start);
@@ -57,20 +57,20 @@ public interface BlHistoryRepository extends JpaRepository<BlHistory, Long> {
 
 
     @Query(value = "SELECT b.segment AS segment, COUNT(*) AS count " +
-            "FROM bl_history b " +
+            "FROM BL_HISTORY  b " +
             "WHERE b.STATUBL = 'BLACKLISTED' " + //BETWEEN :start AND :end " +
             "GROUP BY b.segment ORDER BY count DESC", nativeQuery = true)
     List<Map<String, Object>> countBlacklistBySegment();
 
 
     @Query(value = "SELECT DATE_FORMAT(b.date_action, '%Y-%m') AS mois, COUNT(*) AS count " +
-            "FROM bl_history b " +
+            "FROM BL_HISTORY  b " +
             "WHERE b.STATUBL = 'WHITELISTED' AND b.date_action >= :start " +
             "GROUP BY mois ORDER BY mois", nativeQuery = true)
     List<Map<String, Object>> countWhitelistedByMonth(@Param("start") LocalDateTime start);
 
     @Query(value = "SELECT b.username AS username, COUNT(*) AS count " +
-            "FROM bl_history b " +
+            "FROM BL_HISTORY  b " +
             "WHERE b.STATUBL = 'BLACKLISTED' " +
             "GROUP BY b.username ORDER BY count DESC", nativeQuery = true)
     List<Map<String, Object>> countBlacklistByUser();

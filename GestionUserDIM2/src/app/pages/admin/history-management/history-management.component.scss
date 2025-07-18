@@ -1,0 +1,49 @@
+// 🎨 Style des jetons sélectionnés dans p-multiselect
+::ng-deep .p-multiselect-token {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+  font-weight: 500;
+  border-radius: 20px;
+  padding: 3px 8px;
+  font-size: 0.85rem;
+  border: 1px solid #f5c2c7;
+}
+
+// 📦 Bordure et coins du champ principal p-multiselect
+::ng-deep .p-multiselect {
+  border: 1px solid #f5c2c7 !important;
+  border-radius: 6px;
+  min-width: 220px;
+}
+
+// 🧩 Réduction du padding interne dans la liste déroulante
+::ng-deep .p-multiselect-panel .p-multiselect-items-wrapper {
+  padding-top: 0 !important;
+}
+
+// 🔎 Marge du champ de recherche dans la dropdown
+::ng-deep .p-multiselect-filter-container {
+  margin-bottom: 0.5rem !important;
+}
+
+// ✅ Style pour les éléments sélectionnés
+::ng-deep .p-multiselect-item.p-highlight {
+  background-color: #fdecea !important;
+  color: #b02a37 !important;
+}
+
+// 👆 Style au survol
+::ng-deep .p-multiselect-item:hover {
+  background-color: #f8d7da !important;
+  color: #721c24 !important;
+}
+
+// Pour éviter trop d’espacement entre les champs de date
+::ng-deep .p-calendar {
+  width: 100%;
+}
+
+// Pour homogénéiser les dropdowns
+::ng-deep .p-dropdown {
+  width: 100% !important;
+}
