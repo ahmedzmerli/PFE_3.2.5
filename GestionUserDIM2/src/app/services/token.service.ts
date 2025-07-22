@@ -83,4 +83,18 @@ export class TokenService {
   getFullName(): string | null {
     return localStorage.getItem(this.FULL_NAME_KEY);
   }
+
+// 📧 Récupérer l'email de l'utilisateur depuis le JWT
+getEmail(): string | null {
+  const token = this.getToken();
+  if (!token) return null;
+
+  try {
+    const decoded: any = jwtDecode(token);
+    return decoded.sub || decoded.email || null; // selon ton backend
+  } catch {
+    return null;
+  }
+}
+
 }

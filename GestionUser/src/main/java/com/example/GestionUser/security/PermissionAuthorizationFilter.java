@@ -34,7 +34,7 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
         String uri = request.getServletPath();
         String fullPath = request.getRequestURI();
 
-        // ✅ Skip endpoints publics et fichiers statiques
+        // ✅ Exclure les endpoints publics, statiques et WebSocket (important !)
         if (
                 fullPath.equals("/") ||
                         fullPath.equals("/error") ||
@@ -42,11 +42,15 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
                         fullPath.equals("/index.html") ||
                         fullPath.matches(".*\\.(js|css|png|jpg|jpeg|svg|ico|woff2)$") ||
                         fullPath.startsWith("/assets/") ||
+                        fullPath.startsWith("/static/") ||
                         fullPath.startsWith("/ws") ||
+                        fullPath.startsWith("/topic") ||
                         fullPath.startsWith("/sockjs-node") ||
+                        fullPath.startsWith("/app") || // STOMP app prefix
                         fullPath.startsWith("/api/v1/auth") ||
                         fullPath.startsWith("/api/v1/permissions") ||
-                        fullPath.startsWith("/api/v1/fix-admin")
+                        fullPath.startsWith("/api/v1/fix-admin") ||
+                        fullPath.startsWith("/actuator")
         ) {
             filterChain.doFilter(request, response);
             return;

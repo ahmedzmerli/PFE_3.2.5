@@ -25,7 +25,7 @@
 //
 //@SpringBootTest
 //@AutoConfigureMockMvc
-////@ActiveProfiles("test")
+//@ActiveProfiles("test")
 //class PermissionListControllerIntegrationTest {
 //
 //    @Autowired

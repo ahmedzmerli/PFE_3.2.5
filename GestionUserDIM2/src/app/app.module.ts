@@ -8,11 +8,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
+// import { RegisterComponent } from './pages/register/register.component';
 import { ActivateAccountComponent } from './pages/activate-account/activate-account.component';
 import { BlacklistComponent } from './pages/blacklist/blacklist.component';
 import { AdminComponent } from './pages/admin/admin.component';
-import { HomeComponent } from './pages/home/home.component';
+// import { HomeComponent } from './pages/home/home.component';
 import { Error403Component } from './pages/error403/error403.component';
 
 import { LayoutModule } from './layout/layout.module';
@@ -41,16 +41,22 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import {RouterModule} from "@angular/router";
 import {PasswordModule} from "primeng/password";
 
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+
+
+
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    RegisterComponent,
+    // RegisterComponent,
     ActivateAccountComponent,
     BlacklistComponent,
     AdminComponent,
-    HomeComponent,
+    // HomeComponent,
     Error403Component,
+    
 
   ],
   imports: [
@@ -77,8 +83,11 @@ import {PasswordModule} from "primeng/password";
     ConfirmDialogModule,
     DialogModule,
     DropdownModule,
-    PasswordModule
+    PasswordModule,
+    ToastModule,
+    
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     MessageService,
     ConfirmationService,

@@ -6,13 +6,14 @@ import { AppTopbar } from './app.topbar';
 import { AppSidebar } from './app.sidebar';
 import { AppFooter } from './app.footer';
 import { LayoutService, LayoutState, LayoutConfig } from './service/layout.service';
+import { ChatbotComponent } from '../pages/admin/chatbot/chatbot.component';
 
 
 
 @Component({
   selector: 'app-layout',
   standalone: true,
-  imports: [CommonModule, AppTopbar, RouterModule, AppFooter, AppSidebar],
+  imports: [CommonModule, AppTopbar, RouterModule, AppFooter, AppSidebar , ChatbotComponent ],
 
   template: `
     <div class="layout-wrapper" [ngClass]="containerClass">
@@ -25,6 +26,7 @@ import { LayoutService, LayoutState, LayoutConfig } from './service/layout.servi
         <app-footer></app-footer>
       </div>
       <div class="layout-mask animate-fadein"></div>
+       <app-chatbot></app-chatbot>
     </div>
   `
 })

@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { AdminLayoutComponent } from './layout/admin-layout/admin-layout.component';
 
 import { LoginComponent } from './pages/login/login.component';
-import { RegisterComponent } from './pages/register/register.component';
+// import { RegisterComponent } from './pages/register/register.component';
 import { ActivateAccountComponent } from './pages/activate-account/activate-account.component';
 // import { Dashboard } from './pages/dashboard/dashboard';
 import { Error403Component } from './pages/error403/error403.component';
@@ -19,10 +19,19 @@ import {PdvManagementComponent} from "./pages/admin/pdv-management/pdv-managemen
 import {PdvhistoryManagementComponent} from "./pages/admin/pdvhistory-management/pdvhistory-management.component";
 import {StatsManagementComponent} from "./pages/admin/stats-management/stats-management.component";
 import {MapComponent} from "./pages/admin/map/map.component";
+import { HomeComponent } from './pages/admin/home/home.component';
 
 // import {ChatComponent} from "./pages/admin/chat/chat.component"; // ⚠️ ton layout Sakai principal
 
 export const appRoutes: Routes = [
+    {
+    path: '',
+    component: HomeComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'home', component: HomeComponent }
+    ]
+  },
   {
     path: '',
     component: AppLayout,
@@ -50,12 +59,12 @@ export const appRoutes: Routes = [
             canActivate: [PermissionGuard],
             data: { permission: 'roles.read' }
           },
-          {
-            path: 'register',
-            component: RegisterComponent,
-            canActivate: [PermissionGuard],
-            data: { permission: 'users.create' }
-          },
+          // {
+          //   path: 'register',
+          //   component: RegisterComponent,
+          //   canActivate: [PermissionGuard],
+          //   data: { permission: 'users.create' }
+          // },
           {
             path: '',
             redirectTo: 'users',
@@ -107,6 +116,7 @@ export const appRoutes: Routes = [
             canActivate: [PermissionGuard],
             data: { permission: 'pdv.read' }
           },
+        
 
           // {
           //   path: 'chat',

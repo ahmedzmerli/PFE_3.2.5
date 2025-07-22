@@ -21,6 +21,7 @@ public class RoleController {
     private final RoleRepository roleRepository;
     private final PermissionListRepository permissionListRepository;
 
+
     // ✅ Créer un rôle avec des listes de permissions
     @PostMapping
     @PreAuthorize("hasAuthority('roles.create')")

@@ -10,7 +10,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { RoleModalComponent } from './pages/admin/modals/role-modal/role-modal.component';
 import { PermissionListManagementComponent } from './pages/admin/permission-list-management/permission-list-management.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { RoleManagementComponent } from './pages/admin/role-management/role-management.component';
 import { UserModalComponent } from './pages/admin/modals/user-modal/user-modal.component';
 import { UserManagementComponent } from './pages/admin/user-management/user-management.component';
@@ -39,6 +39,8 @@ import { PdvhistoryManagementComponent } from './pages/admin/pdvhistory-manageme
 import { StatsManagementComponent } from './pages/admin/stats-management/stats-management.component';
 import {NgChartsModule} from "ng2-charts";
 import { MapComponent } from './pages/admin/map/map.component';
+import { HomeComponent } from './pages/admin/home/home.component';
+import { ToastModule } from 'primeng/toast';
 // import {ChatComponent} from "./pages/admin/chat/chat.component";
 
 
@@ -67,6 +69,8 @@ PdvManagementComponent,
 PdvhistoryManagementComponent,
 StatsManagementComponent,
 MapComponent,
+HomeComponent,
+
 // ChatComponent
 
 
@@ -91,7 +95,8 @@ MapComponent,
     TagModule,
     PasswordModule,
     CalendarModule,
-    NgChartsModule
+    NgChartsModule,
+ToastModule,
 
 
   ],
@@ -105,6 +110,7 @@ MapComponent,
   ],
   providers: [
     ConfirmationService,
+    MessageService
   ]
 })
 export class SharedModule { }
