@@ -1,0 +1,197 @@
+<!-- Enhanced Navbar -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <a class="layout-topbar-logo" routerLink="/">
+      <img src="assets/img/ooredoo-background-red.png" alt="Ooredoo" class="logo-img" />
+    </a>
+  </div>
+  <div class="navbar-user">
+    <div class="user-info">
+      <span class="welcome-text">Bienvenue</span>
+      <div class="user-actions">
+        <button class="nav-btn" title="Profil">
+          <i class="fas fa-user-circle"></i>
+        </button>
+        <button class="nav-btn logout-btn" title="Se déconnecter" (click)="confirmLogout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<div class="hero-section">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1 class="hero-title">
+        Bienvenue sur
+        <span class="brand-highlight">CTI-TOOLS</span>
+      </h1>
+      <p class="hero-subtitle">
+        Plateforme de gestion centralisée pour les outils et services Ooredoo
+      </p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <i class="fas fa-users"></i>
+          <span>Gestion des utilisateurs</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-shield-alt"></i>
+          <span>Sécurité avancée</span>
+        </div>
+        <div class="stat-item">
+          <i class="fas fa-chart-line"></i>
+          <span>Analyses en temps réel</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <div class="section-header">
+    <h2>Accès rapide aux modules</h2>
+    <p>Sélectionnez un module pour commencer</p>
+  </div>
+
+  <!-- Enhanced Modules Grid -->
+  <div class="modules-grid">
+    <div class="module-card" *hasPermission="'users.read'" (click)="navigateTo('users')">
+      <div class="card-icon">
+        <i class="fas fa-users"></i>
+      </div>
+      <div class="card-content">
+        <h3>Utilisateurs</h3>
+        <p>Gérer les comptes utilisateurs</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'roles.read'" (click)="navigateTo('liste-roles')">
+      <div class="card-icon">
+        <i class="fas fa-user-shield"></i>
+      </div>
+      <div class="card-content">
+        <h3>Rôles</h3>
+        <p>Configuration des rôles</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'users.create'" (click)="navigateTo('register')">
+      <div class="card-icon">
+        <i class="fas fa-user-plus"></i>
+      </div>
+      <div class="card-content">
+        <h3>Créer Utilisateur</h3>
+        <p>Ajouter un nouvel utilisateur</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'blacklist.read'" (click)="navigateTo('blacklist')">
+      <div class="card-icon">
+        <i class="fas fa-ban"></i>
+      </div>
+      <div class="card-content">
+        <h3>Blacklist</h3>
+        <p>Gestion des restrictions</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'blhistory.read'" (click)="navigateTo('historique')">
+      <div class="card-icon">
+        <i class="fas fa-history"></i>
+      </div>
+      <div class="card-content">
+        <h3>Historique</h3>
+        <p>Consulter l'historique</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'dashboard.read'" (click)="navigateTo('dashboard')">
+      <div class="card-icon">
+        <i class="fas fa-chart-line"></i>
+      </div>
+      <div class="card-content">
+        <h3>Dashboard</h3>
+        <p>Tableaux de bord</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'pdv.read'" (click)="navigateTo('pdv')">
+      <div class="card-icon">
+        <i class="fas fa-store"></i>
+      </div>
+      <div class="card-content">
+        <h3>PDV</h3>
+        <p>Points de vente</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'pdvhistory.read'" (click)="navigateTo('pdvhistory')">
+      <div class="card-icon">
+        <i class="fas fa-clipboard-list"></i>
+      </div>
+      <div class="card-content">
+        <h3>Historique PDV</h3>
+        <p>Historique des PDV</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+
+    <div class="module-card" *hasPermission="'permissionlists.read'" (click)="navigateTo('permission-lists')">
+      <div class="card-icon">
+        <i class="fas fa-tasks"></i>
+      </div>
+      <div class="card-content">
+        <h3>Permissions</h3>
+        <p>Listes des permissions</p>
+      </div>
+      <div class="card-arrow">
+        <i class="fas fa-arrow-right"></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Enhanced Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-info">
+      <div class="footer-logo">
+        <img src="assets/img/ooredoo-background-red.png" alt="Ooredoo" class="footer-logo-img" />
+      </div>
+      <div class="footer-text">
+        <p>&copy; 2025 Ooredoo Tunisie - CTI-TOOLS</p>
+        <p>Plateforme de gestion centralisée</p>
+      </div>
+    </div>
+    <div class="footer-links">
+      <span>Tous droits réservés</span>
+    </div>
+  </div>
+</footer>
+

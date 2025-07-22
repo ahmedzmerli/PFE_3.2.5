@@ -1,6 +1,103 @@
-<div class="container text-center mt-5">
-    <h1 class="display-4">⛔ 403 - Accès refusé</h1>
-    <p class="lead">Vous n’avez pas les droits nécessaires pour accéder à cette page.</p>
-    <a routerLink="/" class="btn btn-primary mt-3">Retour à l’accueil</a>
+<div class="error-403-container">
+  <!-- Background Elements -->
+  <div class="background-elements">
+    <div class="circle circle-1"></div>
+    <div class="circle circle-2"></div>
+    <div class="circle circle-3"></div>
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+    </div>
   </div>
-  
+
+  <!-- Main Content -->
+  <div class="error-content">
+    <!-- Error Code Section -->
+    <div class="error-code-section">
+      <div class="error-number">
+        <span class="digit">4</span>
+        <div class="lock-icon">
+          <i class="pi pi-lock"></i>
+        </div>
+        <span class="digit">3</span>
+      </div>
+      <div class="error-subtitle">Accès Refusé</div>
+    </div>
+
+    <!-- Message Section -->
+    <div class="message-section">
+      <div class="icon-container">
+        <div class="shield-icon">
+          <i class="pi pi-shield"></i>
+        </div>
+      </div>
+
+      <h1 class="error-title">Oops ! Accès non autorisé</h1>
+
+      <p class="error-description">
+        Désolé, vous n'avez pas les permissions nécessaires pour accéder à cette ressource.
+        Veuillez contacter votre administrateur système si vous pensez qu'il s'agit d'une erreur.
+      </p>
+
+      <div class="error-details">
+        <div class="detail-item">
+          <i class="pi pi-info-circle"></i>
+          <span>Code d'erreur : HTTP 403</span>
+        </div>
+        <div class="detail-item">
+          <i class="pi pi-clock"></i>
+          <span>{{ getCurrentTime() }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions Section -->
+    <div class="actions-section">
+      <button class="btn-primary" (click)="goHome()">
+        <i class="pi pi-home"></i>
+        Retour à l'accueil
+      </button>
+
+      <button class="btn-secondary" (click)="goBack()">
+        <i class="pi pi-arrow-left"></i>
+        Page précédente
+      </button>
+
+      <button class="btn-outline" (click)="contactSupport()">
+        <i class="pi pi-envelope"></i>
+        Contacter le support
+      </button>
+    </div>
+
+    <!-- Additional Info -->
+    <div class="additional-info">
+      <div class="info-card">
+        <div class="info-icon">
+          <i class="pi pi-question-circle"></i>
+        </div>
+        <div class="info-content">
+          <h3>Besoin d'aide ?</h3>
+          <p>Si vous pensez avoir les droits d'accès, contactez votre administrateur système.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="error-footer">
+    <div class="footer-content">
+      <div class="logo-section">
+        <div class="logo">
+          <span class="logo-text">CTI-TOOLS</span>
+          <span class="logo-subtitle">by Ooredoo</span>
+        </div>
+      </div>
+      <div class="footer-links">
+        <a href="#" class="footer-link">Aide</a>
+        <a href="#" class="footer-link">Support</a>
+        <a href="#" class="footer-link">Contact</a>
+      </div>
+    </div>
+  </div>
+</div>

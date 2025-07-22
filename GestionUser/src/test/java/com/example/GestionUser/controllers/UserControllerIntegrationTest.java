@@ -24,7 +24,7 @@
 //@SpringBootTest
 //@AutoConfigureMockMvc
 //@Transactional
-////@ActiveProfiles("test")
+//@ActiveProfiles("test")
 //
 //class UserControllerIntegrationTest {
 //

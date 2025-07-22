@@ -17,11 +17,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -118,6 +116,9 @@ public ResponseEntity<User> getUserById(@PathVariable Integer id) {
 }
 
 
+
+
+
     @Transactional
     @PostMapping("/users/{userId}/roles/{roleId}")
     @PreAuthorize("hasAuthority('users.roles.create')")
@@ -134,6 +135,8 @@ public ResponseEntity<User> getUserById(@PathVariable Integer id) {
                 Map.of("message", "Rôle ajouté à l'utilisateur.", "user", user)
         );
     }
+
+
 
     @Transactional
     @DeleteMapping("/users/{userId}/roles/{roleId}")

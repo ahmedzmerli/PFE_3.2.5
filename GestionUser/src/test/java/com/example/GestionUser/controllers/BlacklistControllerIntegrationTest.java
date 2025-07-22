@@ -22,7 +22,7 @@
 //
 //@SpringBootTest
 //@AutoConfigureMockMvc
-////@ActiveProfiles("test")
+//@ActiveProfiles("test")
 //class BlacklistControllerIntegrationTest {
 //
 //    @Autowired
