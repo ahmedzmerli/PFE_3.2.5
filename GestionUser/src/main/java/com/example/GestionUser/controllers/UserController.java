@@ -9,9 +9,11 @@ import com.example.GestionUser.handler.BusinessErrorCodes;
 import com.example.GestionUser.handler.ResourceNotFoundException;
 import com.example.GestionUser.repositories.RoleRepository;
 import com.example.GestionUser.repositories.UserRepository;
+//import com.example.GestionUser.websocket.NotificationService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,8 @@ public class UserController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AuthenticationService authService;
+//    @Autowired
+//    private NotificationService notificationService;
 
     @PostMapping("/users")
     @PreAuthorize("hasAuthority('users.create')")
@@ -130,6 +134,9 @@ public ResponseEntity<User> getUserById(@PathVariable Integer id) {
         if (!user.getRoles().contains(role)) {
             user.getRoles().add(role);
             userRepository.save(user);
+//            notificationService.sendRoleAssignedNotification(
+//                    user.getUsername(), // 👤 utilisé dans le /user/{username}/queue/notifications
+//                    role.getName());
         }
         return ResponseEntity.ok(
                 Map.of("message", "Rôle ajouté à l'utilisateur.", "user", user)

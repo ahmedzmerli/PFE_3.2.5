@@ -15,6 +15,9 @@
         <button class="nav-btn logout-btn" title="Se déconnecter" (click)="confirmLogout()">
           <i class="fas fa-sign-out-alt"></i>
         </button>
+         <button class="nav-btn" title="Changer le mot de passe" (click)="openPasswordModal()">
+    <i class="fas fa-key"></i>
+  </button>
       </div>
     </div>
   </div>
@@ -195,3 +198,20 @@
   </div>
 </footer>
 
+
+
+<p-dialog [(visible)]="showPasswordModal" [modal]="true" [closable]="true" [style]="{ width: '400px' }" header="Changer le mot de passe">
+  <div class="p-fluid">
+    <div class="field">
+      <label for="oldPassword">Ancien mot de passe</label>
+      <input id="oldPassword" type="password" pInputText [(ngModel)]="oldPassword" />
+    </div>
+    <div class="field">
+      <label for="newPassword">Nouveau mot de passe</label>
+      <input id="newPassword" type="password" pInputText [(ngModel)]="newPassword" />
+    </div>
+    <div class="field mt-3 text-right">
+      <button pButton label="Changer" (click)="submitPasswordChange()" [disabled]="!oldPassword || !newPassword || loading"></button>
+    </div>
+  </div>
+</p-dialog>

@@ -14,12 +14,13 @@ export class DashboardManagementComponent implements OnInit {
   endDate?: Date;
   dateError = false;
   requiredError = false;
-loading: boolean = false;
 
-
+  loading = false; // Pour loader dans la table
+  loadingPopup = false; // Pour le modal de chargement
 
   results: Dashboard[] = [];
   filteredResults: Dashboard[] = [];
+
   cols = [
     { field: 'callid', header: 'CallID' },
     { field: 'hotline', header: 'Hotline' },
@@ -59,6 +60,8 @@ loading: boolean = false;
       return;
     }
 
+    this.loadingPopup = true; // Ouvrir modal
+
     this.dashboardService.searchDashboard(
       this.msisdn,
       this.hotline,
@@ -67,6 +70,10 @@ loading: boolean = false;
     ).subscribe(data => {
       this.results = data;
       this.applyFilter();
+      this.loadingPopup = false; // Fermer modal
+    }, error => {
+      console.error('Erreur lors de la recherche :', error);
+      this.loadingPopup = false;
     });
   }
 

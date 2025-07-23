@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-activate-account',
   templateUrl: './activate-account.component.html',
+  styleUrls: ['./activate-account.component.scss']
 })
 export class ActivateAccountComponent {
   userEmail: string | null = localStorage.getItem('activationEmail');

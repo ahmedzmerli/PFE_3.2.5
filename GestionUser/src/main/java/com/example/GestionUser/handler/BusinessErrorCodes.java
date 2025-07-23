@@ -51,6 +51,7 @@ public enum BusinessErrorCodes {
     JIM_MSISDN_REQUIRED(7001, BAD_REQUEST, "Le champ msisdn est obligatoire."),
     JIM_HOTLINE_REQUIRED(7002, BAD_REQUEST, "Le champ hotline est obligatoire."),
 
+    INVALID_PASSWORD(7003, BAD_REQUEST, "Ancien mot de passe incorrect")
 
     ;
 

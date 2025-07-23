@@ -47,10 +47,15 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
                         fullPath.startsWith("/topic") ||
                         fullPath.startsWith("/sockjs-node") ||
                         fullPath.startsWith("/app") || // STOMP app prefix
-                        fullPath.startsWith("/api/v1/auth") ||
+
+                        fullPath.equals("/api/v1/auth/authenticate") ||
+                        fullPath.equals("/api/v1/auth/activate-account") ||
+                        fullPath.equals("/api/v1/auth/change-password") ||
+                        fullPath.equals("/api/v1/auth/register") ||// 👈 sinon elle absorbe tout
                         fullPath.startsWith("/api/v1/permissions") ||
                         fullPath.startsWith("/api/v1/fix-admin") ||
                         fullPath.startsWith("/actuator")
+
         ) {
             filterChain.doFilter(request, response);
             return;

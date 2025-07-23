@@ -68,4 +68,5 @@ export class UserRegisterModalComponent {
     this.showPassword = !this.showPassword;
   }
 
+  
 }

@@ -194,7 +194,20 @@ public class AuthenticationService {
     sendValidationEmail(user);
 }
 
-    
+
+
+    @Transactional
+    public void changePassword(String email, ChangePasswordRequest request) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BusinessException(BusinessErrorCodes.USER_NOT_FOUND, "Utilisateur introuvable"));
+
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new BusinessException(BusinessErrorCodes.INVALID_PASSWORD, "Ancien mot de passe incorrect");
+        }
+
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
     
     
 }

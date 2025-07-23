@@ -1,45 +1,119 @@
-<div class="container mt-4">
-  <div class="card shadow-sm border-0">
-    <div class="card-header bg-danger text-white d-flex align-items-center">
-      <i class="pi pi-envelope me-2"></i>
-      <h5 class="mb-0">Activation du compte</h5>
-    </div>
+<div class="activate-account-container">
+  <!-- Background Elements -->
+  <div class="background-elements">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+  </div>
 
-    <div class="card-body">
-      <form [formGroup]="activationForm" (ngSubmit)="onSubmit()" class="mb-3">
-        <div class="mb-3">
-          <label class="form-label fw-semibold">Code d’activation</label>
-          <input
-            type="text"
-            maxlength="6"
-            pInputText
-            class="form-control"
-            formControlName="token"
-            [ngClass]="{ 'is-invalid': token.invalid && (token.dirty || token.touched) }"
-          />
-          <div *ngIf="token.invalid && (token.dirty || token.touched)" class="invalid-feedback">
-            <div *ngIf="token.errors?.['required']">Le code est requis.</div>
-            <div *ngIf="token.errors?.['minlength'] || token.errors?.['maxlength']">6 chiffres requis.</div>
+  <!-- Main Content -->
+  <div class="content-wrapper">
+    <div class="activation-card">
+      
+      <!-- Header -->
+      <div class="card-header">
+        <div class="header-icon">
+          <i class="pi pi-envelope"></i>
+        </div>
+        <div class="header-content">
+          <h1 class="title">Activation du compte</h1>
+          <p class="subtitle">Saisissez le code reçu par email pour activer votre compte</p>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="card-body">
+        <form [formGroup]="activationForm" (ngSubmit)="onSubmit()" class="activation-form">
+          
+          <!-- Code Input -->
+          <div class="form-group">
+            <label class="form-label">
+              <i class="pi pi-key label-icon"></i>
+              Code d'activation <span class="required">*</span>
+            </label>
+            <div class="input-wrapper">
+              <input
+                type="text"
+                maxlength="6"
+                pInputText
+                class="form-control code-input"
+                formControlName="token"
+                placeholder="Entrez le code à 6 chiffres"
+                [ngClass]="{ 'error': token.invalid && (token.dirty || token.touched) }"
+                autocomplete="one-time-code" />
+              <div class="input-decoration"></div>
+            </div>
+            
+            <!-- Error Messages -->
+            <div *ngIf="token.invalid && (token.dirty || token.touched)" class="error-message">
+              <i class="pi pi-exclamation-triangle"></i>
+              <span *ngIf="token.errors?.['required']">Le code d'activation est requis</span>
+              <span *ngIf="token.errors?.['minlength'] || token.errors?.['maxlength']">Le code doit contenir exactement 6 chiffres</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons">
+            <button class="btn btn-primary" 
+                    type="submit" 
+                    [disabled]="activationForm.invalid || loading">
+              <i class="pi pi-check btn-icon" *ngIf="!loading"></i>
+              <i class="pi pi-spin pi-spinner btn-icon" *ngIf="loading"></i>
+              <span>{{ loading ? 'Validation en cours...' : 'Valider le code' }}</span>
+            </button>
+
+            <button class="btn btn-secondary" 
+                    type="button"
+                    (click)="resendCode()"
+                    [disabled]="!canResend || loading">
+              <i class="pi pi-refresh btn-icon"></i>
+              <span *ngIf="canResend">Renvoyer le code</span>
+              <span *ngIf="!canResend">Renvoyer dans {{ cooldown }}s</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Status Messages -->
+        <div class="status-messages" *ngIf="message || error">
+          <div *ngIf="message" class="success-message">
+            <div class="message-icon">
+              <i class="pi pi-check-circle"></i>
+            </div>
+            <div class="message-content">
+              <strong>Succès !</strong>
+              <p>{{ message }}</p>
+            </div>
+          </div>
+
+          <div *ngIf="error" class="error-message-box">
+            <div class="message-icon">
+              <i class="pi pi-exclamation-circle"></i>
+            </div>
+            <div class="message-content">
+              <strong>Erreur</strong>
+              <p>{{ error }}</p>
+            </div>
           </div>
         </div>
 
-        <div class="d-flex justify-content-between align-items-center">
-          <button class="btn btn-success" type="submit" [disabled]="activationForm.invalid || loading">
-            <i class="pi pi-check me-1"></i> Valider
-          </button>
-
-          <button
-            class="btn btn-link text-danger"
-            type="button"
-            (click)="resendCode()"
-            [disabled]="!canResend || loading">
-            <i class="pi pi-refresh me-1"></i> Renvoyer le code {{ canResend ? '' : '(' + cooldown + 's)' }}
-          </button>
+        <!-- Help Text -->
+        <div class="help-section">
+          <div class="help-item">
+            <i class="pi pi-info-circle"></i>
+            <span>Le code expire dans 15 minutes</span>
+          </div>
+          <div class="help-item">
+            <i class="pi pi-envelope"></i>
+            <span>Vérifiez vos spams si vous ne recevez pas l'email</span>
+          </div>
         </div>
-      </form>
+      </div>
+    </div>
 
-      <div *ngIf="message" class="alert alert-success text-center">{{ message }}</div>
-      <div *ngIf="error" class="alert alert-danger text-center">{{ error }}</div>
+    <!-- Footer -->
+    <div class="page-footer">
+      <p>&copy; 2024 Ooredoo. Tous droits réservés.</p>
     </div>
   </div>
 </div>
+

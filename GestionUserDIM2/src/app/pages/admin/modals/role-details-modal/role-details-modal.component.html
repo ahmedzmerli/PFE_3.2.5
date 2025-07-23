@@ -1,30 +1,136 @@
 <p-dialog [(visible)]="visible"
           [modal]="true"
-          [style]="{ width: '500px' }"
-          [closable]="true"
+          [style]="{ width: '700px', maxWidth: '95vw' }"
+          [closable]="false"
           [dismissableMask]="true"
-          header="Détails du rôle">
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="role-details-modal"
+          (onHide)="close()">
 
-  <ng-container *ngIf="permissionLists && permissionLists.length > 0; else empty">
-    <div class="mb-3">
-      <h6 class="fw-bold text-danger">Listes de permissions associées :</h6>
-      <ul class="list-group">
-        <li *ngFor="let pl of uniquePermissionLists" class="list-group-item d-flex justify-content-between align-items-center">
-          {{ pl.name }}
-          <span class="badge bg-light text-dark border shadow-sm">{{ pl.permissions?.length}}</span>
-        </li>
-      </ul>
-    </div>
-  </ng-container>
-
-  <ng-template #empty>
-    <div class="text-center text-muted">
-      <i class="pi pi-info-circle"></i> Aucune liste de permissions associée.
+  <ng-template pTemplate="header">
+    <div class="modal-header-content">
+      <div class="header-icon">
+        <i class="pi pi-shield"></i>
+      </div>
+      <div class="header-text">
+        <h4 class="modal-title">Détails du rôle</h4>
+        <p class="modal-subtitle">Listes de permissions associées</p>
+      </div>
+      <button type="button" 
+              class="close-button"
+              (click)="close()"
+              aria-label="Fermer">
+        <i class="pi pi-times"></i>
+      </button>
     </div>
   </ng-template>
 
-  <div class="d-flex justify-content-end mt-3">
-    <button pButton type="button" icon="pi pi-times" label="Fermer" class="p-button-secondary" (click)="close()"></button>
-  </div>
+  <ng-template pTemplate="content">
+    <div class="modal-body">
+      <div *ngIf="uniquePermissionLists && uniquePermissionLists.length > 0; else noPermissionLists" class="role-content">
+        <div class="role-summary">
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="pi pi-list"></i>
+            </div>
+            <div class="summary-info">
+              <div class="summary-title">Listes de permissions</div>
+              <div class="summary-count">{{ uniquePermissionLists.length }} listes</div>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon permissions">
+              <i class="pi pi-shield"></i>
+            </div>
+            <div class="summary-info">
+              <div class="summary-title">Total des permissions</div>
+              <div class="summary-count">{{ getTotalPermissionsCount() }} permissions</div>
+            </div>
+          </div>
+        </div>
 
+        <div class="permission-lists-section">
+          <div class="section-header">
+            <div class="section-title">
+              <div class="section-icon">
+                <i class="pi pi-folder"></i>
+              </div>
+              <h6>Listes de permissions associées</h6>
+            </div>
+          </div>
+
+          <div class="permission-lists-grid">
+            <div *ngFor="let pl of uniquePermissionLists" 
+                 class="permission-list-card">
+              <div class="card-header">
+                <div class="card-icon">
+                  <i class="pi pi-list"></i>
+                </div>
+                <div class="card-content">
+                  <div class="list-name">{{ pl.name }}</div>
+                  <div class="list-description">Liste de permissions système</div>
+                </div>
+                <div class="card-badge">
+                  <div class="permissions-count">
+                    <span class="count-number">{{ pl.permissions?.length || 0 }}</span>
+                    <span class="count-label">permissions</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="card-footer" *ngIf="pl.permissions && pl.permissions.length > 0">
+                <div class="permissions-preview">
+                  <div class="preview-title">
+                    <i class="pi pi-eye"></i>
+                    <span>Aperçu des permissions</span>
+                  </div>
+                  <div class="permissions-tags">
+                    <span *ngFor="let perm of getPreviewPermissions(pl.permissions)" 
+                          class="permission-tag">
+                      {{ getPermissionLabel(perm) }}
+                    </span>
+                    <span *ngIf="pl.permissions.length > 3" 
+                          class="more-tag">
+                      +{{ pl.permissions.length - 3 }} autres
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noPermissionLists>
+        <div class="no-permission-lists">
+          <div class="no-lists-icon">
+            <i class="pi pi-info-circle"></i>
+          </div>
+          <div class="no-lists-content">
+            <h6>Aucune liste de permissions</h6>
+            <p>Ce rôle n'a actuellement aucune liste de permissions associée.</p>
+          </div>
+          <div class="no-lists-action">
+            <button type="button" class="btn btn-outline">
+              <i class="pi pi-plus"></i>
+              <span>Assigner des permissions</span>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-primary" 
+              (click)="close()">
+        <i class="pi pi-check"></i>
+        <span>Fermer</span>
+      </button>
+    </div>
+  </ng-template>
 </p-dialog>
+

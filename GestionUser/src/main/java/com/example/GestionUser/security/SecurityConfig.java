@@ -24,6 +24,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
+    private final PermissionAuthorizationFilter permissionAuthorizationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,11 +39,14 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(
                                 "/", "/error",
-                                "/auth/**",
-                                "/api/v1/auth/**",
+                                /*"/auth/**",
+                                "/api/v1/auth/**",*/
                                 "/api/v1/fix-admin/**",
                                 "/api/v1/permissions",
                                 "/api/v1/permissions/**",
+                                "/api/v1/auth/register",
+                                "/api/v1/auth/authenticate",
+                                "/api/v1/auth/activate-account",
 
                                 // ✅ WebSocket & STOMP
                                 "/ws/**",
@@ -82,10 +86,11 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(new PermissionAuthorizationFilter(), JwtFilter.class);
+                .addFilterAfter(permissionAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
 
 
