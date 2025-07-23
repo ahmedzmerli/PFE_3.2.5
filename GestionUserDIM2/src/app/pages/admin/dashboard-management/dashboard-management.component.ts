@@ -14,6 +14,9 @@ export class DashboardManagementComponent implements OnInit {
   endDate?: Date;
   dateError = false;
   requiredError = false;
+loading: boolean = false;
+
+
 
   results: Dashboard[] = [];
   filteredResults: Dashboard[] = [];

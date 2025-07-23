@@ -4,10 +4,12 @@ import { User } from 'src/app/models/user.model';
 
 @Component({
   selector: 'app-user-modal',
-  templateUrl: './user-modal.component.html'
+  templateUrl: './user-modal.component.html',
+  styleUrls: ['./user-modal.component.scss']
 })
 export class UserModalComponent implements OnInit {
   @Input() user: User | null = null;
+  @Input() visible: boolean = false;
   @Output() save = new EventEmitter<User>();
   @Output() cancel = new EventEmitter<void>();
 
@@ -19,12 +21,13 @@ export class UserModalComponent implements OnInit {
     this.form = this.fb.group({
       firstname: [this.user?.firstname || '', Validators.required],
       lastname: [this.user?.lastname || '', Validators.required],
-      email: [this.user?.email || '', [Validators.required, Validators.email]],
-      // add more fields if needed
+      email: [this.user?.email || '', [Validators.required, Validators.email]]
     });
   }
 
   onSubmit(): void {
+    this.form.markAllAsTouched();
+
     if (this.form.valid) {
       const updatedUser: User = {
         ...this.user,
@@ -38,3 +41,4 @@ export class UserModalComponent implements OnInit {
     this.cancel.emit();
   }
 }
+

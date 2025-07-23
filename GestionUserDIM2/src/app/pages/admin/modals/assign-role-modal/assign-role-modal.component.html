@@ -1,86 +1,161 @@
-<p-dialog [(visible)]="visible" [modal]="true" [style]="{width: '600px'}" [closable]="false">
-    <!-- 🔺 En-tête avec bouton fermeture -->
-    <ng-template pTemplate="header">
-      <div class="d-flex justify-content-between align-items-center w-100">
-        <h5 class="text-danger m-0">
-          <i class="pi pi-user-plus me-2"></i> Assigner un rôle à des utilisateurs
-        </h5>
-        <button pButton type="button"
-                (click)="closeModal()"  style="position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; background: transparent; border: none; z-index: 1055;">
-                <i class="pi pi-times text-danger" style="font-size: 1rem;"></i>"></button>
+<p-dialog [(visible)]="visible" 
+          [modal]="true" 
+          [style]="{width: '600px', maxWidth: '90vw'}" 
+          [closable]="false"
+          [dismissableMask]="true"
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="assign-role-modal"
+          (onHide)="closeModal()">
+
+  <ng-template pTemplate="header">
+    <div class="modal-header-content">
+      <div class="header-icon">
+        <i class="pi pi-user-plus"></i>
       </div>
-    </ng-template>
+      <div class="header-text">
+        <h4 class="modal-title">Assigner un rôle</h4>
+        <p class="modal-subtitle">Assigner un rôle à plusieurs utilisateurs</p>
+      </div>
+      <button type="button" 
+              class="close-button"
+              (click)="closeModal()"
+              aria-label="Fermer">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+  </ng-template>
 
-    <!-- 🔽 Contenu -->
-    <ng-template pTemplate="content">
-      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-fluid">
+  <ng-template pTemplate="content">
+    <div class="modal-body">
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="assign-form">
 
-        <!-- 🛡️ Rôle -->
-        <div class="field mb-3">
-          <label class="fw-semibold text-dark"> Rôle à assigner</label>
-          <p-dropdown [options]="roles" optionLabel="name" optionValue="id"
-                      formControlName="roleId"
-                      placeholder="Sélectionner un rôle" class="w-100">
-          </p-dropdown>
+        <!-- Sélection du rôle -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-shield field-icon"></i>
+            Rôle à assigner <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <p-dropdown [options]="roles" 
+                        optionLabel="name" 
+                        optionValue="id"
+                        formControlName="roleId"
+                        placeholder="Sélectionner un rôle" 
+                        class="w-100"
+                        appendTo="body"
+                        [class.error]="form.get('roleId')?.invalid && form.get('roleId')?.touched">
+            </p-dropdown>
+          </div>
+          <small *ngIf="form.get('roleId')?.invalid && form.get('roleId')?.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            Veuillez sélectionner un rôle.
+          </small>
         </div>
 
-        <!-- 🔍 Recherche -->
-        <div class="mb-3">
-          <input type="text"
-                 name="searchTerm"
-                 pInputText
-                 [(ngModel)]="searchTerm"
-                 [ngModelOptions]="{standalone: true}"
-                 (input)="filterUsers()"
-                 placeholder="Rechercher par nom ou email..."
-                 class="form-control" />
+        <!-- Recherche d'utilisateurs -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-search field-icon"></i>
+            Rechercher des utilisateurs
+          </label>
+          <div class="input-wrapper">
+            <input type="text"
+                   name="searchTerm"
+                   pInputText
+                   [(ngModel)]="searchTerm"
+                   [ngModelOptions]="{standalone: true}"
+                   (input)="filterUsers()"
+                   placeholder="Rechercher par nom ou email..."
+                   class="form-control" />
+          </div>
         </div>
 
-        <!-- 🔘 Boutons sélection -->
-        <div class="d-flex justify-content-end gap-2 mb-3">
-          <button pButton type="button" icon="pi pi-check" label="Tout sélectionner"
-                  class="btn btn-sm text-white"
-                  style="background-color: #dc3545; border: none;"
+        <!-- Boutons de sélection -->
+        <div class="selection-buttons">
+          <button pButton 
+                  type="button" 
+                  icon="pi pi-check" 
+                  label="Tout sélectionner"
+                  class="btn btn-select-all"
                   (click)="selectAll()">
           </button>
-
-          <button pButton type="button" icon="pi pi-times" label="Tout désélectionner"
-                  class="btn btn-sm text-white"
-                  style="background-color: #6c757d; border: none;"
+          <button pButton 
+                  type="button" 
+                  icon="pi pi-times" 
+                  label="Tout désélectionner"
+                  class="btn btn-deselect-all"
                   (click)="deselectAll()">
           </button>
         </div>
 
-        <!-- 📋 Liste utilisateurs -->
-        <div style="max-height: 220px; overflow-y: auto;">
-          <div *ngFor="let user of filteredUsers" class="d-flex align-items-center mb-2">
-            <p-checkbox
-              [inputId]="'user-' + user.id"
-              [value]="user.id"
-              [(ngModel)]="selectedUserIds"
-              [ngModelOptions]="{ standalone: true }"
-              [binary]="false"
-              class="me-2"
-            ></p-checkbox>
-            <label [for]="'user-' + user.id" class="m-0">{{ user.firstname }} {{ user.lastname }} ({{ user.email }})</label>
+        <!-- Liste des utilisateurs -->
+        <div class="users-section">
+          <div class="section-header">
+            <h6 class="section-title">
+              <i class="pi pi-users"></i>
+              Utilisateurs disponibles
+              <span class="user-count" *ngIf="filteredUsers.length > 0">
+                ({{ filteredUsers.length }})
+              </span>
+            </h6>
+          </div>
+          
+          <div class="users-list" *ngIf="filteredUsers.length > 0; else noUsers">
+            <div *ngFor="let user of filteredUsers" class="user-item">
+              <p-checkbox
+                [inputId]="'user-' + user.id"
+                [value]="user.id"
+                [(ngModel)]="selectedUserIds"
+                [ngModelOptions]="{ standalone: true }"
+                [binary]="false"
+                class="user-checkbox">
+              </p-checkbox>
+              <label [for]="'user-' + user.id" class="user-label">
+                <div class="user-info">
+                  <div class="user-name">{{ user.firstname }} {{ user.lastname }}</div>
+                  <div class="user-email">{{ user.email }}</div>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <ng-template #noUsers>
+            <div class="no-users">
+              <i class="pi pi-info-circle"></i>
+              <p>Aucun utilisateur trouvé</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Résumé de sélection -->
+        <div class="selection-summary" *ngIf="selectedUserIds.length > 0">
+          <div class="summary-content">
+            <i class="pi pi-check-circle"></i>
+            <span>{{ selectedUserIds.length }} utilisateur(s) sélectionné(s)</span>
           </div>
         </div>
 
-<!--        &lt;!&ndash; ✅ Résumé &ndash;&gt;-->
-<!--        <p-message *ngIf="selectedUserIds.length > 0"-->
-<!--                   severity="info"-->
-<!--                   text="{{ selectedUserIds.length }} utilisateur(s) sélectionné(s)">-->
-<!--        </p-message>-->
-
-        <!-- ✔️ Bouton soumission -->
-        <button pButton type="submit"
-                label="Assigner le rôle"
-                icon="pi pi-check"
-                class="p-button-danger w-100 mt-3"
-                [disabled]="form.invalid || selectedUserIds.length === 0">
-        </button>
       </form>
-    </ng-template>
+    </div>
+  </ng-template>
 
+  <ng-template pTemplate="footer">
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-cancel" 
+              (click)="closeModal()">
+        <i class="pi pi-times"></i>
+        Annuler
+      </button>
+      <button type="button" 
+              class="btn btn-primary" 
+              (click)="onSubmit()" 
+              [disabled]="form.invalid || selectedUserIds.length === 0">
+        <i class="pi pi-check"></i>
+        Assigner le rôle
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
 
-  </p-dialog>

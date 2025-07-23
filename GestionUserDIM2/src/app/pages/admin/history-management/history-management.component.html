@@ -1,158 +1,265 @@
-<div class="container mt-4">
-  <h2 class="text-danger fw-bold mb-4">
-    <i class="pi pi-history me-2"></i> Historique des actions
-  </h2>
-
-  <!-- 🔧 Sélecteur de colonnes -->
-  <div class="text-center mb-4">
-    <h6 class="text-secondary fw-semibold mb-2">Sélection des colonnes à afficher</h6>
-    <div class="d-flex justify-content-center align-items-center gap-3 flex-wrap">
-      <p-multiSelect
-        [options]="cols"
-        [(ngModel)]="selectedColumns"
-        optionLabel="header"
-        placeholder="Afficher colonnes"
-        display="chip"
-        class="p-multiselect-sm border border-danger rounded-1 shadow-sm"
-        style="min-width: 250px;"
-      ></p-multiSelect>
-
-      <button
-        pButton
-        label="Réinitialiser colonnes"
-        icon="pi pi-refresh"
-        class="p-button-sm p-button-text text-danger"
-        (click)="resetColumns()"
-      ></button>
-    </div>
-  </div>
-
-  <!-- 🔍 Filtres -->
-  <div class="card border-0 shadow-sm p-3 mb-4 bg-light">
-    <div class="row g-3">
-      <!-- Partie gauche -->
-      <div class="col-md-9">
-        <div class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label fw-semibold text-dark">MSISDN</label>
-            <div class="input-group">
-              <span class="input-group-text bg-danger text-white"><i class="pi pi-search"></i></span>
-              <input
-                type="text"
-                pInputText
-                [(ngModel)]="msisdn"
-                class="form-control border-danger"
-                placeholder="Ex: 22211234"
-              >
-            </div>
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label fw-semibold text-dark">Statut</label>
-            <p-dropdown
-              [options]="statusOptions"
-              [(ngModel)]="selectedStatus"
-              placeholder="Tous"
-              (onChange)="applyFilter()"
-              class="w-100 border-danger"
-            ></p-dropdown>
-          </div>
-
-          <div class="col-md-4">
-            <label class="form-label fw-semibold text-dark">Motif</label>
-            <p-dropdown
-              [options]="motifOptions"
-              [(ngModel)]="selectedMotif"
-              placeholder="Tous"
-              (onChange)="applyFilter()"
-              class="w-100 border-danger"
-            ></p-dropdown>
-          </div>
+<div class="history-management-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="icon-wrapper">
+          <i class="pi pi-history"></i>
+        </div>
+        <div class="title-text">
+          <h1>Historique des Actions</h1>
+          <p>Consultez l'historique complet des actions sur la blacklist</p>
         </div>
       </div>
-
-      <!-- Partie droite (dates) -->
-      <div class="col-md-3">
-        <div class="d-flex flex-column gap-2">
-          <div>
-            <label class="form-label fw-semibold text-dark">Date début</label>
-            <p-calendar
-              [(ngModel)]="startDate"
-              [showIcon]="true"
-              dateFormat="yy-mm-dd"
-              [showTime]="true"
-              hourFormat="24"
-            ></p-calendar>
-          </div>
-          <div>
-            <br>
-            <label class="form-label fw-semibold text-dark">Date fin</label>
-            <p-calendar
-              [(ngModel)]="endDate"
-              [showIcon]="true"
-              dateFormat="yy-mm-dd"
-              [showTime]="true"
-              hourFormat="24"
-            ></p-calendar>
-          </div>
-        </div>
-      </div>
-
-      <!-- Message d'erreur date -->
-      <div class="col-12">
-        <small *ngIf="dateError" class="text-danger fw-semibold">
-          La date de début doit être antérieure à la date de fin.
-        </small>
-      </div>
-
-      <!-- Boutons centrés -->
-      <div class="col-12 d-flex justify-content-center align-items-center mt-3 gap-3">
+      <div class="header-actions">
         <button
           pButton
-          label="Rechercher"
-          icon="pi pi-search"
-          class="p-button-sm p-button-rounded p-button-danger"
-          (click)="search()"
-        ></button>
-        <button
-          pButton
-          class="p-button-sm p-button-rounded"
-          style="background-color: #fdecea; color: #dc3545; border: none;"
-          (click)="resetFilters()"
-        >
-          Réinitialiser les filtres
+          class="refresh-btn"
+          icon="pi pi-refresh"
+          label="Actualiser"
+          (click)="search()">
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Tableau des résultats -->
-  <p-table [value]="filteredResults" [columns]="selectedColumns">
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">{{ col.header }}</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-rowData let-columns="columns">
-      <tr>
-        <ng-container *ngFor="let col of columns">
-          <td>
-            <!-- Badge stylisé pour la colonne Statut -->
-            <ng-container *ngIf="col.field === 'statut'; else normalStatus">
-              <span class="badge px-3 py-1 rounded-pill"
-                    [ngStyle]="{
-                      'background-color': rowData[col.field] === 'BLACKLISTED' ? '#f8d7da' : '#d4edda',
-                      'color': rowData[col.field] === 'BLACKLISTED' ? '#721c24' : '#155724'
-                    }">
-                {{ rowData[col.field] }}
-              </span>
+  <!-- Column Selection Section -->
+  <div class="column-selection-section">
+    <div class="column-selection-card">
+      <div class="column-header">
+        <h4>
+          <i class="pi pi-table"></i>
+          Colonnes à afficher
+        </h4>
+      </div>
+      <div class="column-content">
+        <p-multiSelect
+          [options]="cols"
+          [(ngModel)]="selectedColumns"
+          optionLabel="header"
+          placeholder="Sélectionner les colonnes"
+          display="chip"
+          class="column-selector">
+        </p-multiSelect>
+        <button
+          pButton
+          icon="pi pi-refresh"
+          class="reset-btn"
+          pTooltip="Réinitialiser les colonnes"
+          (click)="resetColumns()">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search and Filters Section -->
+  <div class="filters-section">
+    <div class="filters-card">
+      <div class="filters-header">
+        <h4>
+          <i class="pi pi-filter"></i>
+          Filtres de recherche
+        </h4>
+      </div>
+      
+      <div class="filters-content">
+        <!-- Search Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="pi pi-search"></i>
+            Recherche MSISDN
+          </label>
+          <div class="search-input-group">
+            <input 
+              type="text" 
+              pInputText 
+              [(ngModel)]="msisdn"
+              class="search-input" 
+              placeholder="Ex: 22211234">
+            <button
+              pButton
+              icon="pi pi-times"
+              class="clear-search-btn"
+              *ngIf="msisdn"
+              (click)="resetFilters()">
+            </button>
+          </div>
+        </div>
+
+        <!-- Status Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="pi pi-tag"></i>
+            Statut
+          </label>
+          <p-dropdown
+            [options]="statusOptions"
+            [(ngModel)]="selectedStatus"
+            placeholder="Tous les statuts"
+            class="filter-dropdown">
+          </p-dropdown>
+        </div>
+
+        <!-- Motif Filter -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="pi pi-bookmark"></i>
+            Motif
+          </label>
+          <p-dropdown
+            [options]="motifOptions"
+            [(ngModel)]="selectedMotif"
+            placeholder="Tous les motifs"
+            class="filter-dropdown">
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Filters Card -->
+    <div class="date-filters-card">
+      <div class="date-filters-header">
+        <h4>
+          <i class="pi pi-calendar"></i>
+          Filtres par date
+        </h4>
+      </div>
+      <div class="date-filters-content">
+        <div class="date-group">
+          <label class="date-label">Date de début</label>
+          <p-calendar
+            [(ngModel)]="startDate"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            [showTime]="true"
+            hourFormat="24"
+            placeholder="Sélectionner une date"
+            class="date-picker">
+          </p-calendar>
+        </div>
+        <div class="date-group">
+          <label class="date-label">Date de fin</label>
+          <p-calendar
+            [(ngModel)]="endDate"
+            [showIcon]="true"
+            dateFormat="yy-mm-dd"
+            [showTime]="true"
+            hourFormat="24"
+            placeholder="Sélectionner une date"
+            class="date-picker">
+          </p-calendar>
+        </div>
+      </div>
+      
+      <!-- Date Error Message -->
+      <div *ngIf="dateError" class="date-error">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>La date de début doit être antérieure à la date de fin.</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="filter-actions">
+        <button
+          pButton
+          label="Rechercher"
+          icon="pi pi-search"
+          class="search-btn"
+          (click)="search()">
+        </button>
+        <button
+          pButton
+          label="Réinitialiser"
+          icon="pi pi-refresh"
+          class="reset-filters-btn"
+          (click)="resetFilters()">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results Table Section -->
+  <div class="table-section">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>
+          <i class="pi pi-list"></i>
+          Résultats de la recherche
+        </h3>
+        <span class="results-count">{{ results.length }} résultat(s)</span>
+      </div>
+      
+      <p-table 
+        [value]="results" 
+        [columns]="selectedColumns"
+        [paginator]="true" 
+        [rows]="15" 
+        [rowsPerPageOptions]="[10, 15, 25, 50]"
+        [scrollable]="true" 
+        scrollHeight="500px"
+        class="history-table"
+        [loading]="loading"
+        styleClass="p-datatable-sm p-datatable-striped">
+        
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th *ngFor="let col of columns">
+              {{ col.header }}
+            </th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-row let-columns="columns">
+          <tr class="table-row">
+            <ng-container *ngFor="let col of columns">
+              <td class="data-cell">
+                <!-- Badge stylisé pour la colonne Statut -->
+                <ng-container *ngIf="col.field === 'statut'; else normalCell">
+                  <span class="status-badge"
+                        [ngClass]="{
+                          'status-blacklisted': row[col.field] === 'BLACKLISTED',
+                          'status-whitelisted': row[col.field] === 'WHITELISTED'
+                        }">
+                    <i class="pi" 
+                       [ngClass]="{
+                         'pi-ban': row[col.field] === 'BLACKLISTED',
+                         'pi-check': row[col.field] === 'WHITELISTED'
+                       }"></i>
+                    {{ row[col.field] }}
+                  </span>
+                </ng-container>
+                <ng-template #normalCell>
+                  <span class="cell-content">{{ row[col.field] || '-' }}</span>
+                </ng-template>
+              </td>
             </ng-container>
-            <ng-template #normalStatus>
-              {{ rowData[col.field] }}
-            </ng-template>
-          </td>
-        </ng-container>
-      </tr>
-    </ng-template>
-  </p-table>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="selectedColumns.length" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-info-circle"></i>
+                <p>Aucun résultat trouvé</p>
+                <small>Essayez de modifier vos critères de recherche</small>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+
+        <ng-template pTemplate="loadingbody">
+          <tr>
+            <td [attr.colspan]="selectedColumns.length" class="loading-message">
+              <div class="loading-state">
+                <i class="pi pi-spin pi-spinner"></i>
+                <p>Chargement des données...</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
 </div>
+
+

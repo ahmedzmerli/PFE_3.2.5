@@ -1,197 +1,337 @@
-<div class="container mt-4">
-
-  <!-- 🧾 En-tête -->
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h2 class="text-danger fw-bold mb-0">
-      <i class="pi pi-users me-2"></i> Gestion des utilisateurs
-    </h2>
-    <div class="d-flex flex-wrap gap-"> <!-- ✅ Espacement entre les boutons -->
-      <button pButton icon="pi pi-user-plus" label="Ajouter un utilisateur"
-              *hasPermission="'users.update'"
-              class="p-button p-button-rounded p-button-outlined p-button-danger shadow-sm"
-              (click)="openRegisterModal()">
-      </button>
-      <button pButton icon="pi pi-user-edit" label="Assigner un rôle"
-              *hasPermission="'users.roles.create'"
-              class="p-button p-button-rounded p-button-outlined p-button-danger shadow-sm"
-              (click)="displayAssignModal = true">
-      </button>
-    </div>
-  </div>
-
-  <!-- 🔍 Zone de filtres -->
-  <div class="card border-0 shadow-sm mb-4 bg-light">
-    <div class="card-body">
-      <div class="row g-3 align-items-end">
-        <div class="col-md-6">
-          <label class="form-label fw-semibold text-dark">
-            <i class="pi pi-search me-1 text-secondary"></i> Recherche
-          </label>
-          <div class="p-inputgroup">
-            <span class="p-inputgroup-addon bg-danger text-white">
-              <i class="pi pi-search"></i>
-            </span>
-            <input type="text" pInputText [(ngModel)]="searchTerm"
-                   (input)="applyFilter()"
-                   class="form-control border-danger"
-                   placeholder="Nom, prénom, email..." />
-          </div>
+<div class="user-management-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="icon-wrapper">
+          <i class="pi pi-users"></i>
         </div>
-
-        <div class="col-md-3">
-          <label class="form-label fw-semibold text-dark">
-            <i class="pi pi-users me-1 text-danger"></i> Rôles
-          </label>
-          <br>
-          <p-dropdown
-            [options]="roles"
-            [(ngModel)]="selectedRole"
-            optionLabel="name"
-            placeholder="Rôle"
-            class="w-100 border-danger"
-            (onChange)="applyFilter()">
-          </p-dropdown>
-
+        <div class="title-text">
+          <h1>Gestion des Utilisateurs</h1>
+          <p>Gérez les utilisateurs, leurs rôles et permissions</p>
         </div>
-
-        <div class="col-md-3">
-          <label class="form-label fw-semibold text-dark">
-            <i class="pi pi-check-circle me-1 text-danger"></i> Activé
-          </label>
-          <br>
-          <p-dropdown [(ngModel)]="enabledFilter"
-                      [options]="[
-                        {label:'Tous',value:''},
-                        {label:'Activé',value:'true'},
-                        {label:'Non activé',value:'false'}
-                      ]"
-                      placeholder="Activé ?"
-                      class="w-100 border-danger"
-                      (onChange)="applyFilter()"></p-dropdown>
-        </div>
+      </div>
+      <div class="header-actions">
+        <button
+          pButton
+          class="refresh-btn"
+          icon="pi pi-refresh"
+          label="Actualiser"
+          (click)="loadUsers()">
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- 📋 Tableau des utilisateurs (PrimeNG style) -->
-  <p-table
-    [value]="filteredUsers"
-    responsiveLayout="scroll"
-    [paginator]="true"
-    [rows]="5"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    class="p-datatable-sm shadow-sm rounded border mt-n2"
-  [style]="{ 'min-width': '1200px' }"
-  dataKey="id">
+  <!-- Action Buttons Card -->
+  <div class="actions-card">
+    <div class="actions-header">
+      <h4>
+        <i class="pi pi-cog"></i>
+        Actions rapides
+      </h4>
+    </div>
+    <div class="actions-content">
+      <button
+        pButton
+        icon="pi pi-user-plus"
+        label="Ajouter un utilisateur"
+        *hasPermission="'users.update'"
+        class="action-btn add-user-btn"
+        (click)="openRegisterModal()">
+      </button>
+      <button
+        pButton
+        icon="pi pi-user-edit"
+        label="Assigner un rôle"
+        *hasPermission="'users.roles.create'"
+        class="action-btn assign-role-btn"
+        (click)="displayAssignModal = true">
+      </button>
+    </div>
+  </div>
 
-    <ng-template pTemplate="header">
-      <tr>
-        <th (click)="sortBy('firstname')" class="cursor-pointer text-nowrap">
-          <i class="pi pi-user-edit me-1"></i> Prénom
-          <i class="pi pi-sort-alpha-up ms-1 text-secondary" *ngIf="sortField === 'firstname' && sortDirection === 'asc'" title="Tri A → Z"></i>
-          <i class="pi pi-sort-alpha-down ms-1 text-secondary" *ngIf="sortField === 'firstname' && sortDirection === 'desc'" title="Tri Z → A"></i>
-          <i class="pi pi-sort ms-1 text-muted" *ngIf="sortField !== 'firstname'" title="Trier"></i>
-        </th>
-
-        <th (click)="sortBy('lastname')" class="cursor-pointer text-nowrap">
-          <i class="pi pi-user me-1"></i> Nom
-          <i class="pi pi-sort-alpha-up ms-1 text-secondary" *ngIf="sortField === 'lastname' && sortDirection === 'asc'" title="Tri A → Z"></i>
-          <i class="pi pi-sort-alpha-down ms-1 text-secondary" *ngIf="sortField === 'lastname' && sortDirection === 'desc'" title="Tri Z → A"></i>
-          <i class="pi pi-sort ms-1 text-muted" *ngIf="sortField !== 'lastname'" title="Trier"></i>
-        </th>
-
-        <th (click)="sortBy('email')" class="cursor-pointer text-nowrap">
-          <i class="pi pi-envelope me-1"></i> Email
-          <i class="pi pi-sort-alpha-up ms-1 text-secondary" *ngIf="sortField === 'email' && sortDirection === 'asc'" title="Tri A → Z"></i>
-          <i class="pi pi-sort-alpha-down ms-1 text-secondary" *ngIf="sortField === 'email' && sortDirection === 'desc'" title="Tri Z → A"></i>
-          <i class="pi pi-sort ms-1 text-muted" *ngIf="sortField !== 'email'" title="Trier"></i>
-        </th>
-
-        <th><i class="pi pi-shield me-1"></i> Rôles</th>
-        <th><i class="pi pi-check me-1"></i> Activation</th>
-        <th><i class="pi pi-cog me-1"></i> Actions</th>
-      </tr>
-    </ng-template>
-
-    <ng-template pTemplate="body" let-user>
-    <tr>
-      <td>{{ user.firstname }}</td>
-      <td>{{ user.lastname }}</td>
-      <td>{{ user.email }}</td>
-      <td>
-          <span *ngFor="let role of user.roles"
-                class="badge bg-light text-dark border border-1 me-1 mb-1 shadow-sm d-inline-flex align-items-center">
-            {{ role.name }}
-            <i class="pi pi-times ms-2 text-danger cursor-pointer"
-               *hasPermission="'users.roles.delete'"
-               (click)="removeRole(user.id!, role.id!)"
-               title="Retirer le rôle"></i>
-          </span>
-      </td>
-      <td>
-        <ng-container *ngIf="!user.enabled; else enabledTag">
-          <button pButton label="Activer"
-                  icon="pi pi-send"
-                  class="p-button-sm p-button-outlined p-button-info"
-                  (click)="resendActivation(user.email)">
+  <!-- Search Filters Card -->
+  <div class="filters-card">
+    <div class="filters-header">
+      <h4>
+        <i class="pi pi-filter"></i>
+        Filtres de recherche
+      </h4>
+    </div>
+    <div class="filters-content">
+      <!-- Search Filter -->
+      <div class="filter-group">
+        <label class="filter-label">
+          <i class="pi pi-search"></i>
+          Recherche
+        </label>
+        <div class="search-input-group">
+          <input 
+            type="text" 
+            pInputText 
+            [(ngModel)]="searchTerm"
+            (input)="applyFilter()"
+            class="search-input" 
+            placeholder="Nom, prénom ou email">
+          <button
+            pButton
+            icon="pi pi-times"
+            class="clear-search-btn"
+            *ngIf="searchTerm"
+            (click)="searchTerm = ''; applyFilter()">
           </button>
-        </ng-container>
-        <ng-template #enabledTag>
-          <span class="badge bg-success-subtle text-dark shadow-sm">✅ Activé</span>
+        </div>
+      </div>
+
+      <!-- Role Filter -->
+      <div class="filter-group">
+        <label class="filter-label">
+          <i class="pi pi-users"></i>
+          Rôle
+        </label>
+        <p-dropdown
+          [options]="roles"
+          [(ngModel)]="selectedRole"
+          optionLabel="name"
+          placeholder="Sélectionner un rôle"
+          class="filter-dropdown"
+          (onChange)="applyFilter()">
+        </p-dropdown>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="filter-group">
+        <label class="filter-label">
+          <i class="pi pi-check-circle"></i>
+          Statut
+        </label>
+        <p-dropdown
+          [(ngModel)]="enabledFilter"
+          [options]="[
+            {label:'Tous',value:''},
+            {label:'Activé',value:'true'},
+            {label:'Non activé',value:'false'}
+          ]"
+          placeholder="Filtrer par statut"
+          class="filter-dropdown"
+          (onChange)="applyFilter()">
+        </p-dropdown>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="filter-actions">
+      <button
+        pButton
+        label="Rechercher"
+        icon="pi pi-search"
+        class="search-btn"
+        (click)="applyFilter()">
+      </button>
+      <button
+        pButton
+        label="Réinitialiser"
+        icon="pi pi-refresh"
+        class="reset-filters-btn"
+        (click)="resetFilters()">
+      </button>
+    </div>
+  </div>
+
+  <!-- Results Table -->
+  <div class="results-card">
+    <div class="table-header">
+      <h4>
+        <i class="pi pi-list"></i>
+        Liste des utilisateurs
+      </h4>
+      <div class="table-info">
+        <span class="count-badge">{{ filteredUsers.length }} utilisateur(s)</span>
+      </div>
+    </div>
+    <div class="table-content">
+      <p-table
+        [value]="filteredUsers"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5,10,20,50]"
+        dataKey="id"
+        [scrollable]="true"
+        scrollHeight="500px"
+        class="users-table"
+        styleClass="p-datatable-sm p-datatable-striped">
+
+        <ng-template pTemplate="header">
+          <tr>
+            <th (click)="sortBy('firstname')" class="sortable-header">
+              <i class="pi pi-user"></i>
+              Prénom
+            </th>
+            <th (click)="sortBy('lastname')" class="sortable-header">
+              <i class="pi pi-user"></i>
+              Nom
+            </th>
+            <th (click)="sortBy('email')" class="sortable-header">
+              <i class="pi pi-envelope"></i>
+              Email
+            </th>
+            <th>
+              <i class="pi pi-users"></i>
+              Rôles
+            </th>
+            <th>
+              <i class="pi pi-check-circle"></i>
+              Statut
+            </th>
+            <th>
+              <i class="pi pi-cog"></i>
+              Actions
+            </th>
+          </tr>
         </ng-template>
-      </td>
-      <td>
-        <button pButton icon="pi pi-user-plus"
-                class="p-button-sm p-button-text p-button-primary me-2"
-                *hasPermission="'users.roles.create'"
-                (click)="openAssignRoleModal(user)">
-        </button>
-        <button pButton icon="pi pi-pencil"
-                class="p-button-sm p-button-text p-button-warning me-2"
-                *hasPermission="'users.update'"
-                (click)="openEdit(user)">
-        </button>
 
-        <button pButton icon="pi pi-trash"
-                class="p-button-sm p-button-text p-button-danger"
-                *hasPermission="'users.delete'"
-                (click)="deleteUser(user.id!)">
-        </button>
-      </td>
-    </tr>
-  </ng-template>
+        <ng-template pTemplate="body" let-user>
+          <tr class="table-row">
+            <td class="data-cell">
+              <span class="cell-content">{{ user.firstname }}</span>
+            </td>
+            <td class="data-cell">
+              <span class="cell-content">{{ user.lastname }}</span>
+            </td>
+            <td class="data-cell">
+              <span class="cell-content">{{ user.email }}</span>
+            </td>
+            <td class="data-cell">
+              <div class="roles-container">
+                <span *ngFor="let role of user.roles" class="role-badge">
+                  {{ role.name }}
+                  <i class="pi pi-times remove-role-icon"
+                     *hasPermission="'users.roles.delete'"
+                     (click)="removeRole(user.id!, role.id!)"
+                     title="Supprimer le rôle"></i>
+                </span>
+              </div>
+            </td>
+            <td class="data-cell">
+              <ng-container *ngIf="!user.enabled; else enabledTag">
+                <button pButton 
+                        label="Activer"
+                        icon="pi pi-send"
+                        class="activate-btn"
+                        (click)="resendActivation(user.email)">
+                </button>
+              </ng-container>
+              <ng-template #enabledTag>
+                <span class="status-badge status-active">
+                  <i class="pi pi-check"></i>
+                  Activé
+                </span>
+              </ng-template>
+            </td>
+            <td class="data-cell">
+              <div class="action-buttons">
+                <button pButton 
+                        icon="pi pi-user-plus"
+                        class="action-btn assign-btn"
+                        *hasPermission="'users.roles.create'"
+                        (click)="openAssignRoleModal(user)"
+                        title="Assigner un rôle">
+                </button>
+                <button pButton 
+                        icon="pi pi-pencil"
+                        class="action-btn edit-btn"
+                        *hasPermission="'users.update'"
+                        (click)="openEdit(user)"
+                        title="Modifier">
+                </button>
+                <button pButton 
+                        icon="pi pi-trash"
+                        class="action-btn delete-btn"
+                        *hasPermission="'users.delete'"
+                        (click)="deleteUser(user.id!)"
+                        title="Supprimer">
+                </button>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
 
-  <ng-template pTemplate="emptymessage">
-    <tr>
-      <td colspan="6" class="text-center text-muted">
-        <i class="pi pi-info-circle"></i> Aucun utilisateur ne correspond à vos critères.
-      </td>
-    </tr>
-  </ng-template>
-  </p-table>
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="6" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-info-circle"></i>
+                <p>Aucun utilisateur trouvé</p>
+                <small>Modifiez vos critères de recherche ou ajoutez un nouvel utilisateur</small>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <app-user-register-modal
+    [visible]="displayRegisterModal"
+    (close)="displayRegisterModal = false"
+    (userCreated)="loadUsers()">
+  </app-user-register-modal>
+
+  <app-user-modal
+    [visible]="displayEditModal"
+    [user]="selectedUser"
+    (save)="saveUserFromModal($event)"
+    (cancel)="displayEditModal = false">
+  </app-user-modal>
+
+  <app-assign-role-modal
+    [visible]="displayAssignModal"
+    (close)="displayAssignModal = false"
+    (roleAssigned)="loadUsers()">
+  </app-assign-role-modal>
+
+  <app-assign-single-role-modal
+    [visible]="displaySingleAssignModal"
+    [userId]="selectedUserId"
+    [userName]="selectedUserName"
+    (close)="displaySingleAssignModal = false"
+    (roleAssigned)="loadUsers()">
+  </app-assign-single-role-modal>
 </div>
 
-<!-- 🔧 Modals -->
-<app-user-register-modal [visible]="displayRegisterModal"
-                                          (close)="displayRegisterModal = false"
-                                          (userCreated)="loadUsers()">
-</app-user-register-modal>
+<!-- SCSS -->
+<style scoped>
+.user-management-container {
+  padding: 1.5rem;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.page-header {
+  background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+  border-radius: 12px;
+  padding: 1.5rem;
+  color: white;
+}
+
+.p-inputgroup-addon {
+  padding: 0.6rem 1rem;
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.p-button-sm {
+  font-size: 0.8rem;
+  padding: 0.4rem 0.75rem;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 1rem;
+}
+</style>
 
 
-<app-user-modal *ngIf="displayEditModal"
-                [user]="selectedUser"
-                (save)="saveUserFromModal($event)"
-                (cancel)="displayEditModal = false">
-</app-user-modal>
-
-<app-assign-role-modal [visible]="displayAssignModal"
-                       (close)="displayAssignModal = false"
-                       (roleAssigned)="loadUsers()">
-</app-assign-role-modal>
-
-<app-assign-single-role-modal [visible]="displaySingleAssignModal"
-                              [userId]="selectedUserId"
-                              [userName]="selectedUserName"
-                              (close)="displaySingleAssignModal = false"
-                              (roleAssigned)="loadUsers()">
-</app-assign-single-role-modal>

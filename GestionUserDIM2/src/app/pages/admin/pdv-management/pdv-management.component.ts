@@ -197,4 +197,17 @@ export class PdvManagementComponent implements OnInit {
       }, 100);
     }
   }
+
+ getColumnWidth(field: string): string {
+  switch (field) {
+    case 'Action':
+      return '100px';
+    case 'msisdn':
+      return '150px';
+    default:
+      return 'auto';
+  }
+}
+
+
 }

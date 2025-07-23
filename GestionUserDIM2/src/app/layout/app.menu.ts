@@ -36,7 +36,6 @@ export class AppMenu implements OnInit {
 
     this.model = [
       {
-        label: 'Admin',
         items: [
           {
             label: 'Utilisateurs',
@@ -62,39 +61,33 @@ export class AppMenu implements OnInit {
             routerLink: ['/blacklist'],
             visible: permissions.includes('blacklist.read')
           },
-
           {
             label: 'Historique',
             icon: 'pi pi-history',
             routerLink: ['/historique'],
             visible: permissions.includes('blhistory.read')
           },
-
-
           {
             label: 'Dashboard',
-            icon: 'pi pi-history',
+            icon: 'pi pi-chart-bar',
             routerLink: ['/dashboard'],
             visible: permissions.includes('dashboard.read')
           },
           {
             label: 'Points de vente',
-            icon: 'pi pi-history',
+            icon: 'pi pi-shop',
             routerLink: ['/pdv'],
             visible: permissions.includes('pdv.read')
           },
           {
-            label: 'Historique points de vente',
-            icon: 'pi pi-history',
+            label: 'Historique PDV',
+            icon: 'pi pi-clock',
             routerLink: ['/pdvhistory'],
             visible: permissions.includes('pdvhistory.read')
-          }
-
-          ,
-
+          },
           {
             label: 'Statistiques',
-            icon: 'pi pi-history',
+            icon: 'pi pi-chart-line',
             routerLink: ['/stats'],
             visible: permissions.includes('dashboard.read')
           }
@@ -105,3 +98,4 @@ export class AppMenu implements OnInit {
     console.log('🧭 Menu généré :', this.model);
   }
 }
+

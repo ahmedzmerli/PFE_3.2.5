@@ -8,7 +8,8 @@ import Swal from "sweetalert2";
 
 @Component({
   selector: 'app-assign-role-modal',
-  templateUrl: './assign-role-modal.component.html'
+  templateUrl: './assign-role-modal.component.html',
+  styleUrls: ['./assign-role-modal.component.scss']
 })
 export class AssignRoleModalComponent implements OnInit {
   @Input() visible: boolean = false;
@@ -20,16 +21,23 @@ export class AssignRoleModalComponent implements OnInit {
   filteredUsers: User[] = [];
   selectedUserIds: number[] = [];
   roles: Role[] = [];
-  selectedRoleId!: number;
   searchTerm: string = '';
 
-  constructor(private fb: FormBuilder, private userService: UserService, private roleService: RoleService) {}
+  constructor(
+    private fb: FormBuilder, 
+    private userService: UserService, 
+    private roleService: RoleService
+  ) {}
 
   ngOnInit(): void {
     this.form = this.fb.group({
       roleId: [null, Validators.required]
     });
 
+    this.loadData();
+  }
+
+  private loadData(): void {
     this.userService.getAll().subscribe(users => {
       this.allUsers = users;
       this.filteredUsers = [...users];
@@ -41,47 +49,77 @@ export class AssignRoleModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.form.invalid || this.selectedUserIds.length === 0) return;
+    this.form.markAllAsTouched();
+    
+    if (this.form.invalid || this.selectedUserIds.length === 0) {
+      return;
+    }
 
     const roleId = this.form.value.roleId;
+    const selectedRole = this.roles.find(r => r.id === roleId);
 
     Swal.fire({
       title: 'Confirmer l\'assignation',
-      text: `Assigner ce rôle à ${this.selectedUserIds.length} utilisateur(s) ?`,
+      html: `
+        <div style="text-align: left; margin: 1rem 0;">
+          <p><strong>Rôle :</strong> ${selectedRole?.name}</p>
+          <p><strong>Utilisateurs :</strong> ${this.selectedUserIds.length}</p>
+        </div>
+        <p>Voulez-vous vraiment assigner ce rôle à ces utilisateurs ?</p>
+      `,
       icon: 'question',
       showCancelButton: true,
       confirmButtonText: 'Oui, assigner',
       cancelButtonText: 'Annuler',
-      confirmButtonColor: '#dc3545'
+      confirmButtonColor: '#e60000',
+      cancelButtonColor: '#6c757d'
     }).then(result => {
       if (result.isConfirmed) {
-        const assignTasks = this.selectedUserIds.map(userId =>
-          this.userService.addRole(userId, roleId).toPromise()
-        );
-
-        Promise.all(assignTasks).then(() => {
-          this.roleAssigned.emit();
-          this.closeModal();
-          Swal.fire({
-            icon: 'success',
-            title: 'Rôles assignés',
-            showConfirmButton: false,
-            timer: 1500
-          });
-        });
+        this.performAssignment(roleId);
       }
+    });
+  }
+
+  private performAssignment(roleId: number): void {
+    const assignTasks = this.selectedUserIds.map(userId =>
+      this.userService.addRole(userId, roleId).toPromise()
+    );
+
+    Promise.all(assignTasks).then(() => {
+      this.roleAssigned.emit();
+      this.closeModal();
+      Swal.fire({
+        icon: 'success',
+        title: 'Rôles assignés avec succès',
+        text: `Le rôle a été assigné à ${this.selectedUserIds.length} utilisateur(s).`,
+        showConfirmButton: false,
+        timer: 2000
+      });
+    }).catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Erreur',
+        text: 'Une erreur est survenue lors de l\'assignation des rôles.',
+        confirmButtonColor: '#e60000'
+      });
     });
   }
 
   closeModal(): void {
     this.selectedUserIds = [];
     this.searchTerm = '';
+    this.filteredUsers = [...this.allUsers];
     this.form.reset();
     this.close.emit();
   }
 
   filterUsers(): void {
-    const term = this.searchTerm.toLowerCase();
+    const term = this.searchTerm.toLowerCase().trim();
+    if (!term) {
+      this.filteredUsers = [...this.allUsers];
+      return;
+    }
+
     this.filteredUsers = this.allUsers.filter(user =>
       user.firstname.toLowerCase().includes(term) ||
       user.lastname.toLowerCase().includes(term) ||
@@ -101,3 +139,5 @@ export class AssignRoleModalComponent implements OnInit {
     return this.selectedUserIds.includes(id);
   }
 }
+
+

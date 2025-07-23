@@ -1,0 +1,106 @@
+.layout-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    &.layout-static {
+        .layout-main-container {
+            margin-left: 18rem;
+            transition: margin-left var(--layout-section-transition-duration);
+        }
+
+        &.layout-static-inactive {
+            .layout-main-container {
+                margin-left: 0;
+            }
+        }
+    }
+
+    &.layout-overlay {
+        .layout-main-container {
+            margin-left: 0;
+        }
+    }
+
+    .layout-main-container {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        padding-top: 5rem; // Topbar height
+        padding-bottom: 4rem; // Footer height
+        transition: all var(--layout-section-transition-duration);
+
+        .layout-main {
+            flex: 1;
+            padding: 2rem;
+            background: var(--surface-ground);
+        }
+    }
+
+    .layout-mask {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 998;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(2px);
+        transition: all 0.3s ease;
+
+        &.animate-fadein {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+    }
+}
+
+// Responsive adjustments
+@media (max-width: 991px) {
+    .layout-wrapper {
+        &.layout-static {
+            .layout-main-container {
+                margin-left: 0;
+            }
+        }
+
+        .layout-main-container {
+            padding-top: 5rem;
+            padding-bottom: 3.5rem;
+
+            .layout-main {
+                padding: 1.5rem;
+            }
+        }
+
+        &.layout-mobile-active {
+            .layout-mask {
+                display: block;
+            }
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .layout-wrapper {
+        .layout-main-container {
+            padding-top: 4.5rem;
+            padding-bottom: 3rem;
+
+            .layout-main {
+                padding: 1rem;
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}

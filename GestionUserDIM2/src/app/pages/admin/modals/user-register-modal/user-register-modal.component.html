@@ -1,75 +1,165 @@
 <p-dialog [(visible)]="visible"
           [modal]="true"
-          [style]="{ width: '500px' }"
+          [style]="{ width: '550px', maxWidth: '90vw' }"
           [closable]="false"
           [dismissableMask]="true"
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="user-register-modal"
           (onHide)="close.emit()">
 
   <ng-template pTemplate="header">
-    <h5 class="text-danger">
-      <i class="pi pi-user-plus me-2"></i>Créer un utilisateur
-    </h5>
+    <div class="modal-header-content">
+      <div class="header-icon">
+        <i class="pi pi-user-plus"></i>
+      </div>
+      <div class="header-text">
+        <h4 class="modal-title">Créer un utilisateur</h4>
+        <p class="modal-subtitle">Ajoutez un nouvel utilisateur au système</p>
+      </div>
+      <button type="button" 
+              class="close-button"
+              (click)="close.emit()"
+              aria-label="Fermer">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
   </ng-template>
 
   <ng-template pTemplate="content">
-    <form [formGroup]="registerForm" novalidate>
-      <div class="mb-3">
-        <label>Prénom</label>
-        <input pInputText class="form-control" formControlName="firstname" />
-        <small *ngIf="firstname.invalid && firstname.touched" class="text-danger">
-          Le prénom est requis.
-        </small>
-      </div>
-
-      <div class="mb-3">
-        <label>Nom</label>
-        <input pInputText class="form-control" formControlName="lastname" />
-        <small *ngIf="lastname.invalid && lastname.touched" class="text-danger">
-          Le nom est requis.
-        </small>
-      </div>
-
-      <div class="mb-3">
-        <label>Email</label>
-        <input pInputText type="email" class="form-control" formControlName="email" />
-        <small *ngIf="email.invalid && email.touched" class="text-danger">
-          <ng-container *ngIf="email.errors?.['required']">L’email est requis.</ng-container>
-          <ng-container *ngIf="email.errors?.['email']">Format invalide.</ng-container>
-        </small>
-      </div>
-
-      <div class="mb-3">
-        <label class="form-label">Mot de passe</label>
-        <div class="position-relative">
-          <input [type]="showPassword ? 'text' : 'password'"
-                 pInputText
-                 formControlName="password"
-                 class="form-control pe-5"
-                 [ngClass]="{ 'is-invalid': password.invalid && password.touched }" />
-
-          <!-- Icône œil positionnée à droite, sans bordure -->
-          <i [class]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"
-             (click)="togglePasswordVisibility()"
-             style="position: absolute; top: 50%; right: 10px; transform: translateY(-50%); cursor: pointer; color: #6c757d;">
-          </i>
+    <div class="modal-body">
+      <form [formGroup]="registerForm" novalidate class="user-form">
+        
+        <!-- Prénom -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-user field-icon"></i>
+            Prénom <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input pInputText 
+                   class="form-control" 
+                   formControlName="firstname"
+                   placeholder="Entrez le prénom"
+                   [class.error]="firstname.invalid && firstname.touched" />
+          </div>
+          <small *ngIf="firstname.invalid && firstname.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            Le prénom est requis.
+          </small>
         </div>
 
-        <small *ngIf="password.invalid && password.touched" class="text-danger">
-          <ng-container *ngIf="password.errors?.['required']">Le mot de passe est requis.</ng-container>
-          <ng-container *ngIf="password.errors?.['minlength']">Minimum 8 caractères.</ng-container>
-        </small>
+        <!-- Nom -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-user field-icon"></i>
+            Nom <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input pInputText 
+                   class="form-control" 
+                   formControlName="lastname"
+                   placeholder="Entrez le nom"
+                   [class.error]="lastname.invalid && lastname.touched" />
+          </div>
+          <small *ngIf="lastname.invalid && lastname.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            Le nom est requis.
+          </small>
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-envelope field-icon"></i>
+            Email <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input pInputText 
+                   type="email" 
+                   class="form-control" 
+                   formControlName="email"
+                   placeholder="exemple@ooredoo.tn"
+                   [class.error]="email.invalid && email.touched" />
+          </div>
+          <small *ngIf="email.invalid && email.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            <ng-container *ngIf="email.errors?.['required']">L'email est requis.</ng-container>
+            <ng-container *ngIf="email.errors?.['email']">Format d'email invalide.</ng-container>
+          </small>
+        </div>
+
+        <!-- Mot de passe -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-lock field-icon"></i>
+            Mot de passe <span class="required">*</span>
+          </label>
+          <div class="input-wrapper password-wrapper">
+            <input [type]="showPassword ? 'text' : 'password'"
+                   pInputText
+                   formControlName="password"
+                   class="form-control password-input"
+                   placeholder="Minimum 8 caractères"
+                   [class.error]="password.invalid && password.touched" />
+            
+            <button type="button"
+                    class="password-toggle"
+                    (click)="togglePasswordVisibility()"
+                    [attr.aria-label]="showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'">
+              <i [class]="showPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            </button>
+          </div>
+          <small *ngIf="password.invalid && password.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            <ng-container *ngIf="password.errors?.['required']">Le mot de passe est requis.</ng-container>
+            <ng-container *ngIf="password.errors?.['minlength']">Minimum 8 caractères requis.</ng-container>
+          </small>
+        </div>
+
+      </form>
+
+      <!-- Messages de statut -->
+      <div class="status-messages">
+        <div *ngIf="submitted" class="success-message">
+          <div class="message-icon">
+            <i class="pi pi-check-circle"></i>
+          </div>
+          <div class="message-content">
+            <strong>Utilisateur créé avec succès !</strong>
+            <p>Un email de confirmation a été envoyé.</p>
+          </div>
+        </div>
+        
+        <div *ngIf="error" class="error-message-box">
+          <div class="message-icon">
+            <i class="pi pi-exclamation-circle"></i>
+          </div>
+          <div class="message-content">
+            <strong>Erreur</strong>
+            <p>{{ error }}</p>
+          </div>
+        </div>
       </div>
-
-    </form>
-
-    <div *ngIf="submitted" class="alert alert-success mt-3 text-center">
-      ✅ Utilisateur enregistré. Email de confirmation envoyé.
     </div>
-    <div *ngIf="error" class="alert alert-danger mt-3 text-center">{{ error }}</div>
   </ng-template>
 
   <ng-template pTemplate="footer">
-    <button (click)="onCancel()" class="btn btn-outline-dark">Annuler</button>
-    <button (click)="onSubmit()" class="btn btn-danger" [disabled]="registerForm.invalid">Créer</button>
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-cancel" 
+              (click)="onCancel()">
+        <i class="pi pi-times"></i>
+        Annuler
+      </button>
+      <button type="button" 
+              class="btn btn-primary" 
+              (click)="onSubmit()" 
+              [disabled]="registerForm.invalid || submitted">
+        <i class="pi pi-check"></i>
+        <span *ngIf="!submitted">Créer l'utilisateur</span>
+        <span *ngIf="submitted">Création en cours...</span>
+      </button>
+    </div>
   </ng-template>
 </p-dialog>

@@ -1,29 +1,113 @@
-<p-dialog [visible]="true" [modal]="true" [style]="{width: '500px'}" [closable]="false" [dismissableMask]="true">
-    <ng-template pTemplate="header">
-      <h5 class="text-danger"><i class="pi pi-user-edit me-2"></i>Modifier l'utilisateur</h5>
-    </ng-template>
-  
-    <ng-template pTemplate="content">
-      <form [formGroup]="form">
-        <div class="mb-3">
-          <label class="form-label">Prénom</label>
-          <input type="text" pInputText class="form-control" formControlName="firstname" />
+<p-dialog [(visible)]="visible" 
+          [modal]="true" 
+          [style]="{ width: '550px', maxWidth: '90vw' }" 
+          [closable]="false" 
+          [dismissableMask]="true"
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="user-edit-modal"
+          (onHide)="cancel.emit()">
+
+  <ng-template pTemplate="header">
+    <div class="modal-header-content">
+      <div class="header-icon">
+        <i class="pi pi-user-edit"></i>
+      </div>
+      <div class="header-text">
+        <h4 class="modal-title">Modifier l'utilisateur</h4>
+        <p class="modal-subtitle">Mettre à jour les informations utilisateur</p>
+      </div>
+      <button type="button" 
+              class="close-button"
+              (click)="cancel.emit()"
+              aria-label="Fermer">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <div class="modal-body">
+      <form [formGroup]="form" novalidate class="user-form">
+        
+        <!-- Prénom -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-user field-icon"></i>
+            Prénom <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input pInputText 
+                   class="form-control" 
+                   formControlName="firstname"
+                   placeholder="Entrez le prénom"
+                   [class.error]="form.get('firstname')?.invalid && form.get('firstname')?.touched" />
+          </div>
+          <small *ngIf="form.get('firstname')?.invalid && form.get('firstname')?.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            Le prénom est requis.
+          </small>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Nom</label>
-          <input type="text" pInputText class="form-control" formControlName="lastname" />
+
+        <!-- Nom -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-user field-icon"></i>
+            Nom <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input pInputText 
+                   class="form-control" 
+                   formControlName="lastname"
+                   placeholder="Entrez le nom"
+                   [class.error]="form.get('lastname')?.invalid && form.get('lastname')?.touched" />
+          </div>
+          <small *ngIf="form.get('lastname')?.invalid && form.get('lastname')?.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            Le nom est requis.
+          </small>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" pInputText class="form-control" formControlName="email" />
+
+        <!-- Email -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-envelope field-icon"></i>
+            Email <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <input pInputText 
+                   type="email" 
+                   class="form-control" 
+                   formControlName="email"
+                   placeholder="exemple@ooredoo.tn"
+                   [class.error]="form.get('email')?.invalid && form.get('email')?.touched" />
+          </div>
+          <small *ngIf="form.get('email')?.invalid && form.get('email')?.touched" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            <ng-container *ngIf="form.get('email')?.errors?.['required']">L'email est requis.</ng-container>
+            <ng-container *ngIf="form.get('email')?.errors?.['email']">Format d'email invalide.</ng-container>
+          </small>
         </div>
+
       </form>
-    </ng-template>
-  
-    <ng-template pTemplate="footer">
-      <button (click)="onCancel()" style="position: absolute; top: 10px; right: 10px; width: 36px; height: 40px; background: transparent; border: none; z-index: 1055;">
-        <i class="pi pi-times text-danger" style="font-size: 1rem;"></i> </button>
-      <button pButton label="Enregistrer" icon="pi pi-check"  (click)="onSubmit()" [disabled]="form.invalid" style="background-color: #dc3545;" ></button>
-    </ng-template>
-  </p-dialog>
-  
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-cancel" 
+              (click)="onCancel()">
+        <i class="pi pi-times"></i>
+        Annuler
+      </button>
+      <button type="button" 
+              class="btn btn-primary" 
+              (click)="onSubmit()" 
+              [disabled]="form.invalid">
+        <i class="pi pi-check"></i>
+        Enregistrer
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>

@@ -5,8 +5,8 @@ import { CommonModule } from '@angular/common';
 import { StyleClassModule } from 'primeng/styleclass';
 import { LayoutService } from './service/layout.service';
 import { AppConfigurator } from './app.configurator';
-import { TokenService } from '../services/token.service'; // 👉 adapter selon ton chemin
-import Swal from 'sweetalert2'; // 👉 SweetAlert2
+import { TokenService } from '../services/token.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-topbar',
@@ -23,11 +23,29 @@ import Swal from 'sweetalert2'; // 👉 SweetAlert2
         </a>
       </div>
 
+      <div class="layout-topbar-center">
+        <div class="welcome-section">
+          <div class="welcome-text">
+            <span class="greeting">Bienvenue</span>
+            <span class="user-name">{{ getUserName() }}</span>
+          </div>
+        </div>
+      </div>
+
       <div class="layout-topbar-actions">
-        <div class="layout-config-menu">
-          <div class="relative">
+        <div class="action-group">
+          
+          
+          <div class="layout-config-menu">
             <app-configurator />
           </div>
+
+          
+
+          <button class="logout-btn layout-topbar-action" (click)="confirmLogout()" title="Se déconnecter">
+            <i class="pi pi-sign-out"></i>
+            <span class="logout-text">Déconnexion</span>
+          </button>
         </div>
 
         <button class="layout-topbar-menu-button layout-topbar-action" pStyleClass="@next"
@@ -39,11 +57,7 @@ import Swal from 'sweetalert2'; // 👉 SweetAlert2
 
         <div class="layout-topbar-menu hidden lg:block">
           <div class="layout-topbar-menu-content">
-            <button type="button" class="layout-topbar-action" (click)="confirmLogout()">
-              <i class="pi pi-sign-out"></i>
-
-
-            </button>
+            
           </div>
         </div>
       </div>
@@ -59,16 +73,31 @@ export class AppTopbar {
     private router: Router
   ) {}
 
+  getUserName(): string {
+    return this.tokenService.getFullName() || 'Utilisateur';
+  }
+
+  getUserInitials(): string {
+    const fullName = this.getUserName();
+    return fullName.split(' ').map(name => name.charAt(0)).join('').toUpperCase().substring(0, 2);
+  }
+
   confirmLogout() {
     Swal.fire({
       title: 'Déconnexion',
       text: 'Voulez-vous vraiment vous déconnecter ?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#dc3545',
+      confirmButtonColor: '#e60000',
       cancelButtonColor: '#6c757d',
       confirmButtonText: 'Oui, se déconnecter',
-      cancelButtonText: 'Annuler'
+      cancelButtonText: 'Annuler',
+      customClass: {
+        popup: 'custom-swal-popup',
+        title: 'custom-swal-title',
+        confirmButton: 'custom-swal-confirm',
+        cancelButton: 'custom-swal-cancel'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         this.tokenService.logout();
@@ -78,9 +107,13 @@ export class AppTopbar {
           title: 'Déconnecté',
           text: 'Vous avez été déconnecté avec succès.',
           timer: 2000,
-          showConfirmButton: false
+          showConfirmButton: false,
+          customClass: {
+            popup: 'custom-swal-success'
+          }
         });
       }
     });
   }
 }
+
