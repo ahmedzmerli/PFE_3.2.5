@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { delay, Observable } from 'rxjs';
 import { Dashboard } from '../models/dashboard.model';
 
 @Injectable({
@@ -27,7 +27,10 @@ export class DashboardService {
     if (endDate) {
       params = params.set('end', this.formatDateTime(endDate));
     }
-    return this.http.get<Dashboard[]>(this.baseUrl, { params });
+     return this.http.get<Dashboard[]>(this.baseUrl, { params }).pipe(
+      delay(3000) // ⏳ Attente de 3 secondes avant d'émettre les données
+    );
+    
   }
 
   private formatDateTime(date: Date): string {

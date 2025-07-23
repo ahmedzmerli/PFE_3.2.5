@@ -240,4 +240,72 @@
       </p-table>
     </div>
   </div>
+
+  <p-dialog 
+    [(visible)]="loadingPopup" 
+    [modal]="true" 
+    [closable]="false" 
+    [draggable]="false" 
+    [resizable]="false" 
+    [baseZIndex]="10000"
+    styleClass="loading-modal"
+    [showHeader]="false">
+    
+    <div class="loading-modal-content">
+      <!-- Background Animation -->
+      <div class="loading-background">
+        <div class="bg-circle bg-circle-1"></div>
+        <div class="bg-circle bg-circle-2"></div>
+        <div class="bg-circle bg-circle-3"></div>
+      </div>
+
+      <!-- Main Loading Content -->
+      <div class="loading-wrapper">
+        <!-- Animated Logo/Icon -->
+        <div class="loading-icon-container">
+          <div class="loading-rings">
+            <div class="ring ring-1"></div>
+            <div class="ring ring-2"></div>
+            <div class="ring ring-3"></div>
+          </div>
+          <div class="center-icon">
+            <i class="pi pi-search"></i>
+          </div>
+        </div>
+
+        <!-- Loading Text -->
+        <div class="loading-text-section">
+          <h3 class="loading-title">Recherche en cours</h3>
+          <p class="loading-subtitle">Analyse des données en temps réel...</p>
+          
+          <!-- Progress Indicator -->
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill"></div>
+            </div>
+            <div class="progress-dots">
+              <span class="dot dot-1"></span>
+              <span class="dot dot-2"></span>
+              <span class="dot dot-3"></span>
+            </div>
+          </div>
+
+          <!-- Status Text -->
+          <div class="status-text">
+            <i class="pi pi-clock status-icon"></i>
+            <span class="status-message">Veuillez patienter pendant le traitement...</span>
+          </div>
+        </div>
+
+        <!-- Decorative Elements -->
+        <div class="decorative-elements">
+          <div class="pulse-ring pulse-ring-1"></div>
+          <div class="pulse-ring pulse-ring-2"></div>
+          <div class="pulse-ring pulse-ring-3"></div>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+
 </div>
+

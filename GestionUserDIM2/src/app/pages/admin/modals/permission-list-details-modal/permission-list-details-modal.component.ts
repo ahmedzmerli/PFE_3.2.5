@@ -3,7 +3,8 @@ import { Permission } from 'src/app/models/permission.model';
 
 @Component({
   selector: 'app-permission-list-details-modal',
-  templateUrl: './permission-list-details-modal.component.html'
+  templateUrl: './permission-list-details-modal.component.html',
+  styleUrls: ['./permission-list-details-modal.component.scss']
 })
 export class PermissionListDetailsModalComponent {
   @Input() visible: boolean = false;
@@ -38,6 +39,21 @@ export class PermissionListDetailsModalComponent {
     }
   }
 
+  getTotalPermissionsCount(): number {
+    return this.permissions.length;
+  }
+
+  getGroupLabel(feature: string): string {
+    const labels: Record<string, string> = {
+      'permissionlists': 'Listes de permissions',
+      'roles': 'Gestion des rôles',
+      'users': 'Gestion des utilisateurs',
+      'blacklist': 'Liste noire',
+      'blhistory': 'Historique blacklist',
+      'permissions': 'Permissions système'
+    };
+    return labels[feature] || feature;
+  }
 
   friendlyLabels: Record<string, string> = {
     'permissionlists.create': 'Créer une liste de permissions',
@@ -65,8 +81,7 @@ export class PermissionListDetailsModalComponent {
     'blacklist.toggle.create': 'Basculer l’état de la blacklist',
     'blhistory.read': 'Voir l’historique de blacklist',
     'permissions.read': 'Voir toutes les permissions',
-    'permissions.distinct.read': 'Voir les types de permissions',
-    'fixadmin.read': 'Initialiser les permissions'
+    'permissions.distinct.read': 'Voir les types de permissions'
   };
 
   getFriendlyLabel(permission: Permission): string {
@@ -74,26 +89,5 @@ export class PermissionListDetailsModalComponent {
     return this.friendlyLabels[key] || key;
   }
 
-  getGroupLabel(feature: string): string {
-    const featureLabels: Record<string, string> = {
-      'users': 'Utilisateurs',
-      'users.roles': 'Rôles des utilisateurs',
-      'users.permissions': 'Permissions des utilisateurs',
-      'permissionlists': 'Listes de permissions',
-      'permissionlists.permissions': 'Permissions dans les listes',
-      'roles': 'Rôles',
-      'roles.roles': 'Rôles imbriqués',
-      'roles.permissionlists': 'Listes liées à un rôle',
-      'roles.createwithpermissionlists': 'Création de rôle avancée',
-      'blacklist': 'Blacklist',
-      'blhistory': 'Historique blacklist',
-      'fixadmin': 'Initialisation système',
-      'roles.permissionlists.read': 'Voir les listes liées à un rôle',
-      'roles.permissionlists.update': 'Modifier les listes d’un rôle'
-    };
-
-    return featureLabels[feature] || feature;
-  }
-
-
 }
+

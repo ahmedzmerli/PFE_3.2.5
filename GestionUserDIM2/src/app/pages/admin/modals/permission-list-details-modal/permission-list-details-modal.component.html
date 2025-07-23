@@ -1,24 +1,117 @@
 <p-dialog [(visible)]="visible"
-          (onHide)="close()"
           [modal]="true"
-          [style]="{ width: '600px' }"
-          header="Détails de la liste"
-          [closable]="true">
+          [style]="{ width: '700px', maxWidth: '95vw' }"
+          [closable]="false"
+          [dismissableMask]="true"
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="permission-list-details-modal"
+          (onHide)="close()">
 
-  <div *ngIf="groupedPermissions.length > 0">
-    <div *ngFor="let group of groupedPermissions" class="mb-3">
-      <h6 class="text-danger">{{ getGroupLabel(group.feature) }}</h6>
-      <ul class="list-unstyled ms-3">
-        <li *ngFor="let perm of group.permissions"
-            class="border rounded px-2 py-1 me-2 mb-2 d-inline-block bg-light text-dark fw-medium shadow-sm">
-          {{ getFriendlyLabel(perm) }}
-        </li>
-      </ul>
+  <ng-template pTemplate="header">
+    <div class="modal-header-content">
+      <div class="header-icon">
+        <i class="pi pi-list"></i>
+      </div>
+      <div class="header-text">
+        <h4 class="modal-title">Détails de la liste</h4>
+        <p class="modal-subtitle">Permissions assignées à cette liste</p>
+      </div>
+      <button type="button" 
+              class="close-button"
+              (click)="close()"
+              aria-label="Fermer">
+        <i class="pi pi-times"></i>
+      </button>
     </div>
-  </div>
+  </ng-template>
 
-  <p-message *ngIf="groupedPermissions.length === 0"
-             severity="info"
-             text="Aucune permission assignée à cette liste.">
-  </p-message>
+  <ng-template pTemplate="content">
+    <div class="modal-body">
+      <div *ngIf="groupedPermissions.length > 0; else noPermissions" class="permissions-content">
+        <div class="permissions-summary">
+          <div class="summary-card">
+            <div class="summary-icon">
+              <i class="pi pi-shield"></i>
+            </div>
+            <div class="summary-info">
+              <div class="summary-title">Total des permissions</div>
+              <div class="summary-count">{{ getTotalPermissionsCount() }} permissions</div>
+            </div>
+          </div>
+          <div class="summary-card">
+            <div class="summary-icon groups">
+              <i class="pi pi-folder"></i>
+            </div>
+            <div class="summary-info">
+              <div class="summary-title">Groupes de fonctionnalités</div>
+              <div class="summary-count">{{ groupedPermissions.length }} groupes</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="permissions-groups">
+          <div *ngFor="let group of groupedPermissions" class="permission-group">
+            <div class="group-header">
+              <div class="group-title">
+                <div class="group-icon-wrapper">
+                  <i class="pi pi-folder group-icon"></i>
+                </div>
+                <div class="group-info">
+                  <h6 class="group-name">{{ getGroupLabel(group.feature) }}</h6>
+                  <span class="group-count">{{ group.permissions.length }} permissions</span>
+                </div>
+              </div>
+              <div class="group-badge">
+                <span class="badge-count">{{ group.permissions.length }}</span>
+              </div>
+            </div>
+            
+            <div class="group-permissions">
+              <div class="permissions-grid">
+                <div *ngFor="let perm of group.permissions" 
+                     class="permission-item">
+                  <div class="permission-icon">
+                    <i class="pi pi-check-circle"></i>
+                  </div>
+                  <div class="permission-content">
+                    <div class="permission-label">{{ getFriendlyLabel(perm) }}</div>
+                    <div class="permission-code">{{ perm.feature }}.{{ perm.action }}</div>
+                  </div>
+                  <div class="permission-status">
+                    <span class="status-badge active">Actif</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #noPermissions>
+        <div class="no-permissions">
+          <div class="no-permissions-icon">
+            <i class="pi pi-info-circle"></i>
+          </div>
+          <div class="no-permissions-content">
+            <h6>Aucune permission assignée</h6>
+            <p>Cette liste ne contient actuellement aucune permission.</p>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-primary" 
+              (click)="close()">
+        <i class="pi pi-check"></i>
+        <span>Fermer</span>
+      </button>
+    </div>
+  </ng-template>
 </p-dialog>
+
+

@@ -1,5 +1,6 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 import { TokenService } from 'src/app/services/token.service';
 import Swal from "sweetalert2";
 
@@ -10,11 +11,18 @@ import Swal from "sweetalert2";
   encapsulation: ViewEncapsulation.None
 })
 export class HomeComponent {
-  constructor(private router: Router, public tokenService: TokenService) {}
+  showPasswordModal = false;
+  oldPassword = '';
+  newPassword = '';
+  loading = false;
+  constructor(private router: Router, public tokenService: TokenService , public authService: AuthService) {}
 
   navigateTo(path: string) {
     this.router.navigate([path]);
   }
+
+
+
 
   logout() {
     // Exemple si tu as un TokenService :
@@ -46,4 +54,30 @@ export class HomeComponent {
       }
     });
   }
+
+openPasswordModal() {
+    this.oldPassword = '';
+    this.newPassword = '';
+    this.showPasswordModal = true;
+  }
+
+  
+  submitPasswordChange() {
+    this.loading = true;
+    this.authService.changePassword(this.oldPassword, this.newPassword).subscribe({
+      next: () => {
+        this.loading = false;
+        this.showPasswordModal = false;
+        Swal.fire('Succès', 'Mot de passe changé avec succès', 'success');
+      },
+      error: (err) => {
+        this.loading = false;
+        Swal.fire('Erreur', err.error.message || 'Erreur lors du changement de mot de passe', 'error');
+      }
+    });
+  }
+
+
 }
+
+

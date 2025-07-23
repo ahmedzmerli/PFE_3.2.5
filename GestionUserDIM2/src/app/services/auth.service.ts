@@ -43,4 +43,15 @@ export class AuthService {
       responseType: 'text'
     });
   }
+
+changePassword(oldPassword: string, newPassword: string) {
+  const body = {
+    oldPassword: oldPassword,
+    newPassword: newPassword
+  };
+  return this.http.post(`${this.BASE_URL}/change-password`, body);
+}
+
+
+
 }
