@@ -1,179 +1,336 @@
-<div class="container mt-4">
-  <h2 class="text-danger fw-bold mb-4">
-    <i class="pi pi-users me-2"></i> Gestion des Points de Vente
-  </h2>
-
-  <!-- 🔧 Sélection des colonnes et bouton réinitialiser (sur la même ligne) -->
-  <div class="d-flex align-items-center justify-content-center gap-3 mb-3">
-    <p-multiSelect
-      [options]="cols"
-      [(ngModel)]="selectedColumns"
-      optionLabel="header"
-      placeholder="Afficher colonnes"
-      display="chip"
-      class="p-multiselect-sm border border-danger rounded-1 shadow-sm"
-      style="min-width: 250px;">
-    </p-multiSelect>
-
-    <button
-      pButton
-      label="Réinitialiser colonnes"
-      icon="pi pi-refresh"
-      class="p-button-sm p-button-text text-danger ms-2"
-      (click)="resetColumns()">
-    </button>
-  </div>
-
-  <!-- 🔘 Bouton Ajouter (juste en dessous, bien centré ou à droite comme tu veux) -->
-  <div class="mb-3 text-end">
-    <button
-      pButton
-      class="p-button p-button-rounded p-button-outlined p-button-danger shadow-sm"
-      icon="pi pi-plus"
-      label="Ajouter un PDV"
-      (click)="openAddModal()">
-    </button>
-  </div>
-  <!-- 🔍 Filtres -->
-  <div class="card border-0 shadow-sm p-3 mb-4 bg-light">
-    <div class="row g-3 align-items-end">
-      <div class="col-md-4">
-        <label class="form-label fw-semibold text-dark">Rechercher MSISDN</label>
-        <div class="input-group">
-          <span class="input-group-text bg-danger text-white"><i class="pi pi-search"></i></span>
-          <input type="text" pInputText [(ngModel)]="msisdn"
-                 (input)="applyFilter()"
-                 class="form-control border-danger" placeholder="Ex: 22211234">
+<div class="pdv-management-container">
+  <!-- Header Section -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="icon-wrapper">
+          <i class="pi pi-map-marker"></i>
+        </div>
+        <div class="title-text">
+          <h1>Gestion des Points de Vente</h1>
+          <p>Gérez et visualisez vos points de vente</p>
         </div>
       </div>
-      <div class="col-md-4 text-end">
+      <div class="header-actions">
         <button
           pButton
-          class="p-button-sm p-button-rounded"
-          style="background-color: #fdecea; color: #dc3545; border: none; margin-top: 0.75rem;"
-          (click)="resetFilters()">
-          Réinitialiser
+          class="add-pdv-btn"
+          icon="pi pi-plus"
+          label="Ajouter un PDV"
+          (click)="openAddModal()">
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 📋 Tableau -->
-  <p-table [value]="filteredResults" [columns]="selectedColumns"
-           [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5, 10, 20]"
-           [scrollable]="true" scrollHeight="400px"
-           class="p-datatable-sm shadow-sm border rounded">
-    <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns">{{ col.header }}</th>
-      </tr>
-    </ng-template>
-    <ng-template pTemplate="body" let-row let-columns="columns">
-      <tr>
-        <ng-container *ngFor="let col of columns">
-          <td *ngIf="col.field !== 'Action'">
-            {{ row[col.field] }}
-          </td>
-          <td *ngIf="col.field === 'Action'">
-            <button
-              pButton
-              icon="pi pi-trash"
-              class="p-button-sm p-button-rounded p-button-danger"
-              (click)="deletePdv(row.msisdn)"
-              title="Supprimer">
-            </button>
-          </td>
-        </ng-container>
-      </tr>
-    </ng-template>
-  </p-table>
+  <!-- Controls Section -->
+  <!-- Controls Section -->
+<div class="controls-section">
+  <div class="controls-card">
+    <!-- Colonnes à afficher -->
+    <div class="control-group">
+      <label class="control-label">
+        <i class="pi pi-table"></i>
+        Colonnes à afficher
+      </label>
+      <div class="control-content flex-wrap">
+        <p-multiSelect
+          [options]="cols"
+          [(ngModel)]="selectedColumns"
+          optionLabel="header"
+          placeholder="Sélectionner les colonnes"
+          display="chip"
+          class="column-selector">
+        </p-multiSelect>
+        <button
+          pButton
+          icon="pi pi-refresh"
+          class="reset-btn"
+          pTooltip="Réinitialiser les colonnes"
+          (click)="resetColumns()">
+        </button>
+      </div>
+    </div>
 
-  <!-- 🟢 Modal d'ajout -->
-  <p-dialog header="Ajouter un PDV" [(visible)]="displayAddModal" [modal]="true" [closable]="true"
-            [dismissableMask]="true" [style]="{width: '400px'}" (onHide)="closeAddModal()">
-    <form (ngSubmit)="addPdv()">
-      <div class="mb-3">
-        <label class="form-label">MSISDN *</label>
-        <input pInputText [(ngModel)]="addPdvForm.msisdn" name="msisdn" class="form-control" required>
+    <!-- Recherche MSISDN -->
+    <div class="control-group">
+      <label class="control-label">
+        <i class="pi pi-search"></i>
+        Recherche MSISDN
+      </label>
+      <div class="control-content">
+        <div class="search-input-group">
+          <input 
+            type="text" 
+            pInputText 
+            [(ngModel)]="msisdn"
+            (input)="applyFilter()"
+            class="search-input" 
+            placeholder="Ex: 22211234">
+          <button
+            pButton
+            icon="pi pi-times"
+            class="clear-search-btn"
+            *ngIf="msisdn"
+            (click)="resetFilters()">
+          </button>
+        </div>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Nom PDV *</label>
-        <input pInputText [(ngModel)]="addPdvForm.nomPdv" name="nomPdv" class="form-control" required>
+    </div>
+
+    <!-- Visualisation -->
+    <div class="control-group">
+      <label class="control-label">
+        <i class="pi pi-map"></i>
+        Visualisation
+      </label>
+      <div class="control-content">
+        <button
+          pButton
+          [label]="showMap ? 'Masquer la carte' : 'Afficher la carte'"
+          [icon]="showMap ? 'pi pi-eye-slash' : 'pi pi-eye'"
+          class="map-toggle-btn"
+          [class.active]="showMap"
+          (click)="toggleMap()">
+        </button>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Adresse</label>
-        <input pInputText [(ngModel)]="addPdvForm.adresse" name="adresse" class="form-control">
+    </div>
+  </div>
+</div>
+
+
+  <!-- Data Table Section -->
+  <div class="table-section">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>
+          <i class="pi pi-list"></i>
+          Liste des Points de Vente
+        </h3>
+        <span class="results-count">{{ filteredResults.length }} résultat(s)</span>
       </div>
-      <div class="mb-3">
-        <label class="form-label">Code PDV</label>
-        <input pInputText [(ngModel)]="addPdvForm.codePdv" name="codePdv" class="form-control">
+      
+      <p-table 
+        [value]="filteredResults" 
+        [columns]="selectedColumns"
+        [paginator]="true" 
+        [rows]="10" 
+        [rowsPerPageOptions]="[5, 10, 20, 50]"
+        [scrollable]="true" 
+        scrollHeight="450px"
+        class="pdv-table"
+        [loading]="false"
+        styleClass="p-datatable-sm p-datatable-striped">
+        
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+          <th *ngFor="let col of columns" [style.width]="getColumnWidth(col.field)">
+  {{ col.header }}
+</th>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="body" let-row let-columns="columns">
+          <tr class="table-row">
+            <ng-container *ngFor="let col of columns">
+              <td *ngIf="col.field !== 'Action'" class="data-cell">
+                <span class="cell-content">{{ row[col.field] || '-' }}</span>
+              </td>
+              <td *ngIf="col.field === 'Action'" class="action-cell">
+                <div class="action-buttons">
+                  <button
+                    pButton
+                    icon="pi pi-trash"
+                    class="delete-btn"
+                    pTooltip="Supprimer ce PDV"
+                    (click)="deletePdv(row.msisdn)">
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+          </tr>
+        </ng-template>
+        
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td [attr.colspan]="selectedColumns.length" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-info-circle"></i>
+                <p>Aucun point de vente trouvé</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- Map Section -->
+  <div *ngIf="showMap" class="map-section">
+    <div class="map-card">
+      <div class="map-header">
+        <h3>
+          <i class="pi pi-map"></i>
+          Localisation des Points de Vente
+        </h3>
       </div>
-      <div class="mb-3">
-      <label class="form-label">Latitude</label>
-      <input pInputText type="number" [(ngModel)]="addPdvForm.latitude"
-             name="latitude" class="form-control"
-             (ngModelChange)="updateMiniMap()">
+      <div id="map" class="map-container"></div>
+    </div>
+  </div>
+
+  <!-- Selected PDV Details -->
+  <div *ngIf="selectedPdv" class="details-section">
+    <div class="details-card">
+      <div class="details-header">
+        <h3>
+          <i class="pi pi-info-circle"></i>
+          Détails du Point de Vente
+        </h3>
+        <button 
+          pButton 
+          icon="pi pi-times" 
+          class="close-details-btn"
+          (click)="selectedPdv = null">
+        </button>
       </div>
-      <div class="mb-3">
-      <label class="form-label">Longitude</label>
-      <input pInputText type="number" [(ngModel)]="addPdvForm.longitude"
-             name="longitude" class="form-control"
-             (ngModelChange)="updateMiniMap()">
+      <div class="details-content">
+        <div class="detail-item">
+          <label>MSISDN</label>
+          <span>{{ selectedPdv.msisdn }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Nom du PDV</label>
+          <span>{{ selectedPdv.nomPdv }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Adresse</label>
+          <span>{{ selectedPdv.adresse || 'Non renseignée' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Code PDV</label>
+          <span>{{ selectedPdv.codePdv || 'Non renseigné' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add PDV Modal -->
+  <p-dialog 
+    header="Ajouter un nouveau Point de Vente" 
+    [(visible)]="displayAddModal" 
+    [modal]="true" 
+    [closable]="true"
+    [dismissableMask]="true" 
+    [style]="{width: '500px'}" 
+    (onHide)="closeAddModal()"
+    styleClass="add-pdv-modal">
+    
+    <form (ngSubmit)="addPdv()" class="add-pdv-form">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label required">MSISDN</label>
+          <input 
+            pInputText 
+            [(ngModel)]="addPdvForm.msisdn" 
+            name="msisdn" 
+            class="form-input" 
+            placeholder="Ex: 22211234"
+            required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label required">Nom du PDV</label>
+          <input 
+            pInputText 
+            [(ngModel)]="addPdvForm.nomPdv" 
+            name="nomPdv" 
+            class="form-input" 
+            placeholder="Nom du point de vente"
+            required>
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Adresse</label>
+          <input 
+            pInputText 
+            [(ngModel)]="addPdvForm.adresse" 
+            name="adresse" 
+            class="form-input"
+            placeholder="Adresse complète">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Code PDV</label>
+          <input 
+            pInputText 
+            [(ngModel)]="addPdvForm.codePdv" 
+            name="codePdv" 
+            class="form-input"
+            placeholder="Code unique">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Latitude</label>
+          <input 
+            pInputText 
+            type="number" 
+            [(ngModel)]="addPdvForm.latitude"
+            name="latitude" 
+            class="form-input"
+            placeholder="Ex: 36.8065"
+            (ngModelChange)="updateMiniMap()">
+        </div>
+        
+        <div class="form-group">
+          <label class="form-label">Longitude</label>
+          <input 
+            pInputText 
+            type="number" 
+            [(ngModel)]="addPdvForm.longitude"
+            name="longitude" 
+            class="form-input"
+            placeholder="Ex: 10.1815"
+            (ngModelChange)="updateMiniMap()">
+        </div>
       </div>
 
-      <div *ngIf="addPdvForm.latitude && addPdvForm.longitude" class="mt-3">
+      <!-- Mini Map Preview -->
+      <div *ngIf="addPdvForm.latitude && addPdvForm.longitude" class="mini-map-section">
         <label class="form-label">Aperçu de l'emplacement</label>
-        <div id="mini-map" style="height: 200px; width: 100%; border-radius: 5px;"></div>
+        <div id="mini-map" class="mini-map"></div>
+        <div class="map-controls">
+          <div class="form-check">
+            <input 
+              class="form-check-input" 
+              type="checkbox" 
+              id="interactiveMapSwitch" 
+              [(ngModel)]="miniMapInteractive" 
+              (change)="updateMiniMap()">
+            <label class="form-check-label" for="interactiveMapSwitch">
+              Carte interactive
+            </label>
+          </div>
+        </div>
       </div>
 
-      <div class="form-check form-switch mt-3">
-        <input class="form-check-input" type="checkbox" id="interactiveMapSwitch" [(ngModel)]="miniMapInteractive" (change)="updateMiniMap()">
-        <label class="form-check-label" for="interactiveMapSwitch">
-          réinitialistion de la vue de la mini-map
-        </label>
-      </div>
-      <div class="mt-4 d-flex justify-content-center"style="gap: 2.5rem;">
+      <!-- Form Actions -->
+      <div class="form-actions">
         <button
           pButton
           type="button"
           label="Annuler"
-          (click)="closeAddModal()"
-          style="background-color: #e9ecef; color: #495057; border: none;">
+          class="cancel-btn"
+          (click)="closeAddModal()">
         </button>
         <button
           pButton
           type="submit"
-          label="Ajouter"
-          class="p-button-danger">
+          label="Ajouter le PDV"
+          class="submit-btn"
+          [disabled]="!addPdvForm.msisdn || !addPdvForm.nomPdv">
         </button>
       </div>
-
     </form>
   </p-dialog>
-
-  <!-- 🔘 Bouton Afficher/Cacher la carte -->
-  <div class="text-center mb-4">
-    <button
-      pButton
-      [label]="showMap ? 'Cacher la carte' : 'Afficher la carte'"
-      icon="pi pi-map-marker"
-      class="p-button-rounded p-button-outlined p-button-danger shadow-sm"
-      (click)="toggleMap()">
-    </button>
-  </div>
-
-  <!-- 🗺️ Carte -->
-  <div *ngIf="showMap" id="map" class="leaflet-map-container mb-4"></div>
-
-  <!-- 📋 Détails PDV cliqué -->
-  <div *ngIf="selectedPdv" class="mt-2 border p-3 shadow bg-light">
-    <h5 class="text-danger"><i class="pi pi-info-circle me-2"></i>Détails du PDV</h5>
-    <p><strong>MSISDN :</strong> {{ selectedPdv.msisdn }}</p>
-    <p><strong>Nom :</strong> {{ selectedPdv.nomPdv }}</p>
-    <p><strong>Adresse :</strong> {{ selectedPdv.adresse }}</p>
-    <p><strong>Code :</strong> {{ selectedPdv.codePdv }}</p>
-  </div>
-
-
-
 </div>
+

@@ -8,7 +8,8 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-role-management',
-  templateUrl: './role-management.component.html'
+  templateUrl: './role-management.component.html',
+  styleUrls: ['./role-management.component.scss']
 })
 export class RoleManagementComponent implements OnInit {
   roles: Role[] = [];
@@ -22,6 +23,12 @@ export class RoleManagementComponent implements OnInit {
 
   sortField: 'name' | 'permissionLists' | '' = '';
   sortDirection: 'asc' | 'desc' = 'asc';
+
+  resetFilters(): void {
+  this.searchTerm = '';
+  this.filterMinPermissionLists = 0;
+  this.applyFilter();
+}
 
 
 

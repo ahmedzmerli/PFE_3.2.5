@@ -1,17 +1,24 @@
 package com.example.GestionUser.entities;
 
-
+import jakarta.persistence.*;
 import lombok.*;
 
-@Getter
-@Setter
-@AllArgsConstructor
+import java.time.LocalDateTime;
+
+@Entity
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ChatMessage {
 
-    private MessageType type;
-    private String content;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String sender;
 
+    private String content;
+
+    private LocalDateTime timestamp;
 }

@@ -9,7 +9,8 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-user-management',
-  templateUrl: './user-management.component.html'
+  templateUrl: './user-management.component.html',
+  styleUrls: ['./user-management.component.scss']
 })
 export class UserManagementComponent implements OnInit {
   users: User[] = [];
@@ -69,6 +70,14 @@ displayRegisterModal = false;
       this.roles = data;
     });
   }
+
+  resetFilters(): void {
+  this.searchTerm = '';
+  this.selectedRole = null;
+  this.enabledFilter = '';
+  this.applyFilter();
+}
+
 
   applyFilter(): void {
     const term = this.searchTerm.toLowerCase();

@@ -41,6 +41,7 @@ import {NgChartsModule} from "ng2-charts";
 import { MapComponent } from './pages/admin/map/map.component';
 import { HomeComponent } from './pages/admin/home/home.component';
 import { ToastModule } from 'primeng/toast';
+import { ChatComponent } from './pages/admin/chat/chat.component';
 // import {ChatComponent} from "./pages/admin/chat/chat.component";
 
 
@@ -71,7 +72,7 @@ StatsManagementComponent,
 MapComponent,
 HomeComponent,
 
-// ChatComponent
+ChatComponent
 
 
 

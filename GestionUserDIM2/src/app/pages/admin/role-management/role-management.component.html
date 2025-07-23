@@ -1,131 +1,181 @@
-<div class="container mt-4">
-
+<div class="role-management-container">
   <!-- 🧾 En-tête -->
-  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-    <h2 class="text-danger fw-bold mb-0">
-      <i class="pi pi-users me-2"></i> Gestion des rôles
-    </h2>
-    <div class="d-flex flex-wrap gap-3">
-      <button pButton icon="pi pi-plus" label="Nouveau rôle"
-              class="p-button p-button-rounded p-button-outlined p-button-danger shadow-sm"
-              *hasPermission="'roles.create'"
-              (click)="createNewRole()">
-      </button>
-    </div>
-  </div>
-
-  <!-- 🔍 Zone de filtres -->
-  <div class="card border-0 shadow-sm mb-4 bg-light">
-    <div class="card-body">
-      <div class="row g-3 align-items-end">
-        <div class="col-md-6">
-          <label class="form-label fw-semibold text-dark">
-            <i class="pi pi-search me-1 text-secondary"></i> Recherche
-          </label>
-          <div class="p-inputgroup">
-            <span class="p-inputgroup-addon bg-danger text-white">
-              <i class="pi pi-search"></i>
-            </span>
-            <input type="text" pInputText [(ngModel)]="searchTerm"
-                   (input)="applyFilter()"
-                   class="form-control border-danger"
-                   placeholder="Nom du rôle..." />
-          </div>
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <div class="icon-wrapper">
+          <i class="pi pi-users"></i>
         </div>
-
-        <div class="col-md-6">
-          <label class="form-label fw-semibold text-dark">
-            <i class="pi pi-clone me-1 text-danger"></i> Min. listes assignées
-          </label>
-          <input type="number" pInputText
-                 [(ngModel)]="filterMinPermissionLists"
-                 (input)="applyFilter()"
-                 class="form-control border-danger"
-                 placeholder="Ex: 1, 2, 3..." />
+        <div class="title-text">
+          <h1>Gestion des rôles</h1>
+          <p>Créez, éditez et gérez les rôles et leurs listes de permissions</p>
         </div>
+      </div>
+      <div class="header-actions">
+        <button
+          pButton
+          icon="pi pi-plus"
+          label="Nouveau rôle"
+          class="refresh-btn"
+          *hasPermission="'roles.create'"
+          (click)="createNewRole()">
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- 📋 Tableau des rôles -->
-  <p-table
-    [value]="filteredRoles"
-    [paginator]="true"
-    [rows]="10"
-    [rowsPerPageOptions]="[5, 10, 20]"
-    [rowHover]="true"
-    [style]="{ 'min-width': '60rem' }"
-    class="p-datatable-sm shadow-sm rounded border">
+  <!-- 🔍 Filtres -->
+  <div class="filters-section">
+    <div class="filters-card">
+      <div class="filters-header">
+        <h4>
+          <i class="pi pi-filter"></i>
+          Filtres de recherche
+        </h4>
+      </div>
 
-    <!-- 🔠 Header -->
-    <ng-template pTemplate="header">
-      <tr>
-        <!-- 🔤 Tri par nom -->
-        <th (click)="sortBy('name')" class="cursor-pointer text-nowrap">
-          <i class="pi pi-id-card me-1"></i> Nom
-          <i class="pi pi-sort-alpha-up ms-1 text-secondary" *ngIf="sortField === 'name' && sortDirection === 'asc'" title="Tri A → Z"></i>
-          <i class="pi pi-sort-alpha-down ms-1 text-secondary" *ngIf="sortField === 'name' && sortDirection === 'desc'" title="Tri Z → A"></i>
-          <i class="pi pi-sort ms-1 text-muted" *ngIf="sortField !== 'name'" title="Trier"></i>
-        </th>
+      <div class="filters-content">
+        <!-- Recherche -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="pi pi-search"></i>
+            Recherche
+          </label>
+          <div class="search-input-group">
+            <input
+              type="text"
+              pInputText
+              [(ngModel)]="searchTerm"
+              class="search-input"
+              placeholder="Nom du rôle"
+              (input)="applyFilter()" />
+          </div>
+        </div>
 
-        <!-- 🔢 Tri par nombre de listes -->
-        <th (click)="sortBy('permissionLists')" class="cursor-pointer text-nowrap">
-          <i class="pi pi-clone me-1"></i> Listes assignées
-          <i class="pi pi-sort-numeric-up-alt ms-1 text-secondary" *ngIf="sortField === 'permissionLists' && sortDirection === 'asc'" title="Tri croissant"></i>
-          <i class="pi pi-sort-numeric-down ms-1 text-secondary" *ngIf="sortField === 'permissionLists' && sortDirection === 'desc'" title="Tri décroissant"></i>
-          <i class="pi pi-sort ms-1 text-muted" *ngIf="sortField !== 'permissionLists'" title="Trier"></i>
-        </th>
+        <!-- Min. listes assignées -->
+        <div class="filter-group">
+          <label class="filter-label">
+            <i class="pi pi-clone"></i>
+            Min. listes assignées
+          </label>
+          <input
+            type="number"
+            pInputText
+            [(ngModel)]="filterMinPermissionLists"
+            class="search-input"
+            placeholder="Ex: 1, 2, 3..."
+            (input)="applyFilter()" />
+        </div>
+      </div>
 
-        <th style="width: 12rem">Actions</th>
-      </tr>
-    </ng-template>
+      <div class="filter-actions">
+        <button
+          pButton
+          label="Réinitialiser"
+          icon="pi pi-times"
+          class="reset-filters-btn"
+          (click)="resetFilters()">
+        </button>
+      </div>
+    </div>
+  </div>
 
+  <!-- 📋 Tableau -->
+  <div class="table-section">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>
+          <i class="pi pi-list"></i>
+          Liste des rôles
+        </h3>
+        <span class="results-count">{{ filteredRoles.length }} résultat(s)</span>
+      </div>
 
-    <!-- 🔁 Body -->
-    <ng-template pTemplate="body" let-role>
-      <tr>
-        <td>{{ role.name }}</td>
-        <td>
-          <span class="badge bg-light text-dark border shadow-sm">
-            {{ role.permissionLists.length || 0 }}
-          </span>
-        </td>
-        <td>
-          <button pButton icon="pi pi-eye"
-                  class="p-button-sm p-button-text p-button-info me-2"
-                  (click)="showRolePermissionLists(role)">
-          </button>
+      <p-table
+        [value]="filteredRoles"
+        [paginator]="true"
+        [rows]="10"
+        [rowsPerPageOptions]="[5, 10, 20]"
+        [rowHover]="true"
+        [scrollable]="true"
+        scrollHeight="450px"
+        class="history-table"
+        styleClass="p-datatable-sm p-datatable-striped">
 
-          <button pButton icon="pi pi-pencil"
-                  class="p-button-sm p-button-text p-button-warning me-2"
-                  *hasPermission="'roles.update'"
-                  (click)="editRole(role)">
-          </button>
+        <!-- Header -->
+        <ng-template pTemplate="header">
+          <tr>
+            <th (click)="sortBy('name')" class="cursor-pointer text-nowrap">
+              <i class="pi pi-id-card me-1"></i> Nom
+              <i class="pi pi-sort-alpha-up ms-1 text-secondary" *ngIf="sortField === 'name' && sortDirection === 'asc'"></i>
+              <i class="pi pi-sort-alpha-down ms-1 text-secondary" *ngIf="sortField === 'name' && sortDirection === 'desc'"></i>
+              <i class="pi pi-sort ms-1 text-muted" *ngIf="sortField !== 'name'"></i>
+            </th>
+            <th (click)="sortBy('permissionLists')" class="cursor-pointer text-nowrap">
+              <i class="pi pi-clone me-1"></i> Listes assignées
+              <i class="pi pi-sort-numeric-up-alt ms-1 text-secondary" *ngIf="sortField === 'permissionLists' && sortDirection === 'asc'"></i>
+              <i class="pi pi-sort-numeric-down ms-1 text-secondary" *ngIf="sortField === 'permissionLists' && sortDirection === 'desc'"></i>
+              <i class="pi pi-sort ms-1 text-muted" *ngIf="sortField !== 'permissionLists'"></i>
+            </th>
+            <th class="text-nowrap"><i class="pi pi-cog me-1"></i> Actions</th>
+          </tr>
+        </ng-template>
 
-          <button pButton icon="pi pi-trash"
-                  class="p-button-sm p-button-text p-button-danger"
-                  *hasPermission="'roles.delete'"
-                  (click)="deleteRole(role.id!)">
-          </button>
-        </td>
+        <!-- Body -->
+        <ng-template pTemplate="body" let-role>
+          <tr>
+            <td>{{ role.name }}</td>
+            <td>
+              <span class="badge bg-light text-dark border shadow-sm">
+                {{ role.permissionLists.length || 0 }}
+              </span>
+            </td>
+            <td>
+              <button
+                pButton
+                icon="pi pi-eye"
+                class="p-button-sm p-button-text p-button-info me-2"
+                (click)="showRolePermissionLists(role)">
+              </button>
 
-      </tr>
-    </ng-template>
+              <button
+                pButton
+                icon="pi pi-pencil"
+                class="p-button-sm p-button-text p-button-warning me-2"
+                *hasPermission="'roles.update'"
+                (click)="editRole(role)">
+              </button>
 
-    <!-- 🕳️ Empty message -->
-    <ng-template pTemplate="emptymessage">
-      <tr>
-        <td colspan="3" class="text-center text-muted">
-          <i class="pi pi-info-circle"></i> Aucun rôle trouvé
-        </td>
-      </tr>
-    </ng-template>
-  </p-table>
+              <button
+                pButton
+                icon="pi pi-trash"
+                class="p-button-sm p-button-text p-button-danger"
+                *hasPermission="'roles.delete'"
+                (click)="deleteRole(role.id!)">
+              </button>
+            </td>
+          </tr>
+        </ng-template>
 
+        <!-- Empty -->
+        <ng-template pTemplate="emptymessage">
+          <tr>
+            <td colspan="3" class="empty-message">
+              <div class="empty-state">
+                <i class="pi pi-info-circle"></i>
+                <p>Aucun rôle trouvé</p>
+              </div>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- 🔍 Modal -->
   <app-role-details-modal
     [visible]="showDetailsDialog"
     (visibleChange)="showDetailsDialog = $event"
     [permissionLists]="detailedPermissionLists">
   </app-role-details-modal>
-
 </div>

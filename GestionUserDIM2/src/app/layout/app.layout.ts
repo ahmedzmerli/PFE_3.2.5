@@ -119,7 +119,8 @@ export class AppLayout implements OnDestroy {
       'layout-static': config.menuMode === 'static',
       'layout-static-inactive': state.staticMenuDesktopInactive && config.menuMode === 'static',
       'layout-overlay-active': state.overlayMenuActive,
-      'layout-mobile-active': state.staticMenuMobileActive
+      'layout-mobile-active': state.staticMenuMobileActive,
+      'layout-sidebar-active': state.overlayMenuActive || state.staticMenuMobileActive
     };
   }
 
@@ -133,3 +134,4 @@ export class AppLayout implements OnDestroy {
     }
   }
 }
+

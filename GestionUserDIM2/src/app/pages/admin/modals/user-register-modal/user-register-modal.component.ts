@@ -5,7 +5,8 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-register-modal',
-  templateUrl: './user-register-modal.component.html'
+  templateUrl: './user-register-modal.component.html',
+  styleUrls: ['./user-register-modal.component.scss']
 })
 export class UserRegisterModalComponent {
   @Output() close = new EventEmitter<void>();

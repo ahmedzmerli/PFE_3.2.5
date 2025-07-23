@@ -1,38 +1,100 @@
-<p-dialog [(visible)]="visible" [modal]="true" [style]="{width: '500px'}" [closable]="false">
-    <ng-template pTemplate="header">
-      <h5 class="text-danger"><i class="pi pi-user-edit me-2"></i>Assigner un rôle</h5>
+<p-dialog [(visible)]="visible" 
+          [modal]="true" 
+          [style]="{width: '500px', maxWidth: '90vw'}" 
+          [closable]="false"
+          [dismissableMask]="true"
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="assign-single-role-modal"
+          (onHide)="closeModal()">
 
-    </ng-template>
-
-    <ng-template pTemplate="content">
-      <div class="mb-3">
-        <strong>Utilisateur :</strong> {{ userName }}
+  <ng-template pTemplate="header">
+    <div class="modal-header-content">
+      <div class="header-icon">
+        <i class="pi pi-user-edit"></i>
       </div>
-
-      <p-dropdown
-        [options]="roles"
-        optionLabel="name"
-        optionValue="id"
-        [(ngModel)]="selectedRoleId"
-        placeholder="Sélectionner un rôle"
-        class="w-100 mb-3"
-        appendTo="body"> <!-- 👈 solution clé -->
-      </p-dropdown>
-
-
-      <button
-        pButton
-        label="Assigner"
-        icon="pi pi-check"
-        class="p-button-danger w-100"
-        [disabled]="!selectedRoleId"
-        (click)="assignRole()">
+      <div class="header-text">
+        <h4 class="modal-title">Assigner un rôle</h4>
+        <p class="modal-subtitle">Assigner un rôle à un utilisateur</p>
+      </div>
+      <button type="button" 
+              class="close-button"
+              (click)="closeModal()"
+              aria-label="Fermer">
+        <i class="pi pi-times"></i>
       </button>
-    </ng-template>
+    </div>
+  </ng-template>
 
-    <ng-template pTemplate="footer">
-      <button  (click)="closeModal()"
-      style="position: absolute; top: 10px; right: 10px; width: 36px; height: 36px; background: transparent; border: none; z-index: 1055;">
-              <i class="pi pi-times text-danger" style="font-size: 1rem;"></i></button>
-    </ng-template>
-  </p-dialog>
+  <ng-template pTemplate="content">
+    <div class="modal-body">
+      <div class="assign-form">
+        
+        <!-- Utilisateur sélectionné -->
+        <div class="user-info-section">
+          <div class="user-info-card">
+            <div class="user-avatar">
+              <i class="pi pi-user"></i>
+            </div>
+            <div class="user-details">
+              <div class="user-name">{{ userName }}</div>
+              <div class="user-label">Utilisateur sélectionné</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sélection du rôle -->
+        <div class="form-group">
+          <label class="form-label">
+            <i class="pi pi-shield field-icon"></i>
+            Rôle à assigner <span class="required">*</span>
+          </label>
+          <div class="input-wrapper">
+            <p-dropdown
+              [options]="roles"
+              optionLabel="name"
+              optionValue="id"
+              [(ngModel)]="selectedRoleId"
+              placeholder="Sélectionner un rôle"
+              class="w-100"
+              appendTo="body"
+              [class.error]="!selectedRoleId && showValidation">
+            </p-dropdown>
+          </div>
+          <small *ngIf="!selectedRoleId && showValidation" class="error-message">
+            <i class="pi pi-exclamation-triangle"></i>
+            Veuillez sélectionner un rôle.
+          </small>
+        </div>
+
+        <!-- Résumé -->
+        <div class="assignment-summary" *ngIf="selectedRoleId">
+          <div class="summary-content">
+            <i class="pi pi-info-circle"></i>
+            <span>Le rôle sera assigné à <strong>{{ userName }}</strong></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="modal-footer">
+      <button type="button" 
+              class="btn btn-cancel" 
+              (click)="closeModal()">
+        <i class="pi pi-times"></i>
+        Annuler
+      </button>
+      <button type="button" 
+              class="btn btn-primary" 
+              (click)="assignRole()" 
+              [disabled]="!selectedRoleId">
+        <i class="pi pi-check"></i>
+        Assigner le rôle
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+

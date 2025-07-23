@@ -9,7 +9,8 @@ import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-permission-list-management',
-  templateUrl: './permission-list-management.component.html'
+  templateUrl: './permission-list-management.component.html',
+  styleUrls: ['./permission-list-management.component.scss']
 })
 export class PermissionListManagementComponent implements OnInit {
   permissionLists: PermissionList[] = [];
@@ -142,5 +143,11 @@ export class PermissionListManagementComponent implements OnInit {
     this.applyFilter();
   }
 
+
+  resetFilters(): void {
+  this.searchTerm = '';
+  this.filterMinPermissions = 0;
+  this.applyFilter();
+}
 
 }

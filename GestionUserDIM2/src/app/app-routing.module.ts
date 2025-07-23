@@ -20,6 +20,7 @@ import {PdvhistoryManagementComponent} from "./pages/admin/pdvhistory-management
 import {StatsManagementComponent} from "./pages/admin/stats-management/stats-management.component";
 import {MapComponent} from "./pages/admin/map/map.component";
 import { HomeComponent } from './pages/admin/home/home.component';
+import { ChatComponent } from './pages/admin/chat/chat.component';
 
 // import {ChatComponent} from "./pages/admin/chat/chat.component"; // ⚠️ ton layout Sakai principal
 
@@ -113,6 +114,12 @@ export const appRoutes: Routes = [
           {
             path: 'map',
             component: MapComponent,
+            canActivate: [PermissionGuard],
+            data: { permission: 'pdv.read' }
+          },
+          {
+            path: 'chat',
+            component: ChatComponent,
             canActivate: [PermissionGuard],
             data: { permission: 'pdv.read' }
           },
