@@ -117,6 +117,5 @@ jobs:
         continue-on-error: true
 
   
-          cd GestionUser
-          mvn clean deploy -DskipTests
+        
 
