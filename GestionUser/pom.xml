@@ -227,6 +227,7 @@
 			</plugin>
 
 
+
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -250,6 +251,12 @@
 	</build>
 
 
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus</id>
+			<url>http://localhost:8085/repository/maven-snapshots-DIMII/</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 
 </project>
