@@ -35,35 +35,32 @@ jobs:
           mvn clean test
 
   sonarqube-analysis:
-    name: SonarQube Analysis
-    runs-on: self-hosted
-    needs: build-test
+  name: SonarQube Analysis
+  runs-on: self-hosted
+  needs: build-test
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 17
 
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-
+    - name: Cache Maven packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-maven-
 
-      - name: SonarQube Scan
-        run: |
-          cd GestionUser
-          mvn verify sonar:sonar \
-            -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 \
-            -Dsonar.organization=ahmedzmerli \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+    - name: SonarQube Scan
+      run: |
+        cd GestionUser
+        mvn verify sonar:sonar -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 -Dsonar.organization=ahmedzmerli -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
 
   docker-build-push-run:
     name: Docker Build, Push, and Compose Up
