@@ -8,63 +8,63 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  # build-test:
-  #   name: Build and Test
-  #   runs-on: self-hosted
+  build-test:
+    name: Build and Test
+    runs-on: self-hosted
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Set up JDK 17
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         distribution: temurin
-  #         java-version: 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-  #     - name: Cache Maven packages
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.m2/repository
-  #         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: ${{ runner.os }}-maven-
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
 
-  #     - name: Build and run unit tests
-  #       shell: cmd
-  #       run: |
-  #         cd GestionUser && mvn clean test
+      - name: Build and run unit tests
+        shell: cmd
+        run: |
+          cd GestionUser && mvn clean test
 
-  # sonarqube-analysis:
-  #   name: SonarQube Analysis
-  #   runs-on: self-hosted
-  #   needs: build-test
+  sonarqube-analysis:
+    name: SonarQube Analysis
+    runs-on: self-hosted
+    needs: build-test
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Set up JDK 17
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         distribution: temurin
-  #         java-version: 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-  #     - name: Cache Maven packages
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.m2/repository
-  #         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: ${{ runner.os }}-maven-
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-maven-
 
-  #     - name: SonarQube Scan
-  #       shell: cmd
-  #       run: |
-  #         cd GestionUser && mvn verify sonar:sonar -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 -Dsonar.organization=ahmedzmerli -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+      - name: SonarQube Scan
+        shell: cmd
+        run: |
+          cd GestionUser && mvn verify sonar:sonar -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 -Dsonar.organization=ahmedzmerli -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
   docker-build-push-run:
     name: Docker Build, Push, and Compose Up
     runs-on: self-hosted
-    # needs: sonarqube-analysis
+    needs: sonarqube-analysis
 
     steps:
       - name: Checkout code
@@ -94,32 +94,4 @@ jobs:
       - name: Run backend and frontend services
         run: docker-compose -f docker-compose.yml up -d
 
-  launch-and-deploy-to-nexus:
-    name: Launch Tools & Deploy Snapshot to Nexus
-    runs-on: self-hosted
-    needs: docker-build-push-run
-
-    steps:
-      - name: Remove existing containers (if any)
-        shell: pwsh
-        run: |
-          docker rm -f nexus 2>$null
-          docker rm -f prometheus 2>$null
-          docker rm -f grafana 2>$null
-
-
-      - name: Start Nexus, Prometheus, Grafana
-        run: |
-          docker run -d --name nexus -p 8085:8081 sonatype/nexus3
-          docker run -d --name prometheus -p 9090:9090 prom/prometheus
-          docker run -d --name grafana -p 3000:3000 grafana/grafana
-
-      - name: Wait for Nexus to be ready
-        run: |
-          echo "🕐 Waiting for Nexus to start..."
-          sleep 90
-
-      - name: Build and Deploy Snapshot to Nexus
-        run: |
-          cd GestionUser
-          mvn clean deploy -DaltDeploymentRepository=nexus::default::http://localhost:8085/repository/maven-snapshots-DIMII/
+  
