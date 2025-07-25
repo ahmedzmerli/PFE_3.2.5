@@ -101,10 +101,12 @@ jobs:
 
     steps:
       - name: Remove existing containers if needed
+        shell: pwsh
         run: |
-          docker rm -f nexus || true
-          docker rm -f prometheus || true
-          docker rm -f grafana || true
+          docker rm -f nexus -ErrorAction SilentlyContinue
+          docker rm -f prometheus -ErrorAction SilentlyContinue
+          docker rm -f grafana -ErrorAction SilentlyContinue
+
 
       - name: Start Nexus, Prometheus, Grafana
         run: |
