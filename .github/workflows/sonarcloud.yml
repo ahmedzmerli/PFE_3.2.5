@@ -94,25 +94,30 @@ jobs:
       - name: Run backend and frontend services
         run: docker-compose -f docker-compose.yml up -d
 
-
   launch-and-deploy-to-nexus:
     name: Launch Tools & Deploy Snapshot to Nexus
     runs-on: self-hosted
     needs: docker-build-push-run
 
     steps:
+      - name: Remove existing containers if needed
+        run: |
+          docker rm -f nexus || true
+          docker rm -f prometheus || true
+          docker rm -f grafana || true
+
       - name: Start Nexus, Prometheus, Grafana
         run: |
           docker run -d --name nexus -p 8085:8081 sonatype/nexus3
           docker run -d --name prometheus -p 9090:9090 prom/prometheus
           docker run -d --name grafana -p 3000:3000 grafana/grafana
+
+      - name: Wait for Nexus to be ready
+        run: |
           echo "🕐 Waiting for Nexus to start..."
-          timeout 90 ping 127.0.0.1 >nul
+          sleep 90
 
       - name: Build and Deploy Snapshot to Nexus
-        shell: cmd
         run: |
           cd GestionUser
           mvn clean deploy -DaltDeploymentRepository=nexus::default::http://localhost:8085/repository/maven-snapshots-DIMII/
-
-      
