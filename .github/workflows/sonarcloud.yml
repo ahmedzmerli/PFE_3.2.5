@@ -57,14 +57,10 @@ jobs:
           restore-keys: ${{ runner.os }}-maven-
 
       - name: SonarQube Scan
-        shell: pwsh
+        shell: cmd
         run: |
-          cd GestionUser
-          & mvn "verify" "sonar:sonar" `
-            "-Dsonar.projectKey=ahmedzmerli_PFE_3.2.5" `
-            "-Dsonar.organization=ahmedzmerli" `
-            "-Dsonar.host.url=https://sonarcloud.io" `
-            "-Dsonar.login=${{ secrets.SONAR_TOKEN }}"
+          cd GestionUser && mvn verify sonar:sonar -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 -Dsonar.organization=ahmedzmerli -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
 
   docker-build-push-run:
     name: Docker Build, Push, and Compose Up
