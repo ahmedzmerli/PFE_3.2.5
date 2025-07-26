@@ -13,12 +13,13 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     healthcheck:
-      test: [ "CMD", "mysql", "-h", "localhost", "-u", "root", "-e", "SELECT 1 FROM dual;" ]
+      test: [ "CMD", "mysql", "-h", "mysql", "-u", "root", "-e", "SELECT 1 FROM dual;" ]
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 60s
     networks:
       - app-network
 
@@ -30,16 +31,18 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/GestionUser?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/GestionUser?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&maxReconnects=10
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ""
-      SPRING_JIMDASHBOARD_DATASOURCE_URL: jdbc:mysql://mysql:3306/jimdashboard?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      SPRING_JIMDASHBOARD_DATASOURCE_URL: jdbc:mysql://mysql:3306/jimdashboard?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&maxReconnects=10
       SPRING_JIMDASHBOARD_DATASOURCE_USERNAME: root
       SPRING_JIMDASHBOARD_DATASOURCE_PASSWORD: ""
       MAILING_FRONTEND_ACTIVATION_URL: http://frontend:80/activate-account
       SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 5
       SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: 30000
       SPRING_DATASOURCE_HIKARI_IDLE_TIMEOUT: 600000
+      SPRING_DATASOURCE_HIKARI_MAX_LIFETIME: 1800000
+      SPRING_DATASOURCE_HIKARI_INITIALIZATION_FAIL_TIMEOUT: -1
     depends_on:
       mysql:
         condition: service_healthy
