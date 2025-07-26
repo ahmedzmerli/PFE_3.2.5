@@ -95,7 +95,7 @@ jobs:
         run: docker-compose -f docker-compose.yml up -d
         
       - name: Wait for MySQL to be healthy (PowerShell)
-        shell: pwsh
+        shell: cmd
         run: |
           Write-Host "Waiting for MySQL to be healthy..."
           for ($i = 1; $i -le 30; $i++) {
