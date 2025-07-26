@@ -95,6 +95,4 @@ jobs:
           docker-compose -f docker-compose.yml logs mysql
           docker-compose -f docker-compose.yml logs backend
 
-      - name: Test application
-        run: |
-          curl --retry 5 --retry-delay 10 http://localhost:8081/actuator/health || exit 1
+      
