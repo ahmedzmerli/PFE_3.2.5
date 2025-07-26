@@ -1,26 +1,21 @@
 # Build stage
 FROM maven:3.9.8-eclipse-temurin-17 AS build
 WORKDIR /app
-
-# Copier uniquement les dependances pour optimiser les builds
-COPY pom.xml .
+COPY pom.xml ./
 RUN mvn dependency:go-offline
-
-# Copier tout le projet et compiler le .war
 COPY . .
 RUN mvn clean package -DskipTests
 
 # Run stage
-
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Copier le WAR genere
+# Add dockerize
+ADD https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz .
+RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz && rm dockerize-linux-amd64-v0.6.1.tar.gz
+
+# Copy .war
 COPY --from=build /app/target/GestionUser-0.0.1-SNAPSHOT.war app.war
 
-# Copier le script wait-for-it.sh
-COPY wait-for-it.sh .
-RUN chmod +x wait-for-it.sh
-
-# Attendre MySQL avant de lancer Spring Boot
-CMD ["./wait-for-it.sh", "mysql:3306", "--timeout=60", "--", "java", "-jar", "app.war"]
+# Start app after waiting for MySQL
+CMD ["dockerize", "-wait", "tcp://mysql:3306", "-timeout", "60s", "java", "-jar", "app.war"]
