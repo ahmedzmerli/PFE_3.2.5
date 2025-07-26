@@ -96,6 +96,7 @@ jobs:
         
       - name: Wait for MySQL to be healthy
         run: |
+        shell: bash
           echo "Waiting for MySQL to be healthy..."
           for i in {1..30}; do
             STATUS=$(docker inspect --format='{{.State.Health.Status}}' mysql)
