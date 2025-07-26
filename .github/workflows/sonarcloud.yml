@@ -91,9 +91,9 @@ jobs:
       - name: Run Docker Compose
         run: |
           docker-compose -f docker-compose.yml up -d
-          sleep 60  # Wait for containers to stabilize
+          sleep 120  # Wait for containers to stabilize
           docker-compose -f docker-compose.yml logs mysql
-          docker-compose -f docker-compose.yml logs springboot
+          docker-compose -f docker-compose.yml logs backend
 
       - name: Test application
         run: |
