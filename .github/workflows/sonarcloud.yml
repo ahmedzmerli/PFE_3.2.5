@@ -94,21 +94,19 @@ jobs:
       - name: Run backend and frontend services
         run: docker-compose -f docker-compose.yml up -d
         
-      - name: Wait for MySQL to be healthy
-        shell: bash
+      - name: Wait for MySQL to be healthy (PowerShell)
+        shell: pwsh
         run: |
-          echo "Waiting for MySQL to be healthy..."
-          for i in {1..30}; do
-            STATUS=$(docker inspect --format='{{.State.Health.Status}}' mysql)
-            echo "Current MySQL health: $STATUS"
-            if [ "$STATUS" = "healthy" ]; then
-              echo "✅ MySQL is healthy!"
+          Write-Host "Waiting for MySQL to be healthy..."
+          for ($i = 1; $i -le 30; $i++) {
+            $status = docker inspect --format='{{.State.Health.Status}}' mysql
+            Write-Host "Current MySQL health: $status"
+            if ($status -eq "healthy") {
+              Write-Host "✅ MySQL is healthy!"
               exit 0
-            fi
-            sleep 5
-          done
-          echo "❌ MySQL did not become healthy in time."
+            }
+            Start-Sleep -Seconds 5
+          }
+          Write-Host "❌ MySQL did not become healthy in time."
           docker logs mysql
           exit 1
-
-  
