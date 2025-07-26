@@ -12,12 +12,12 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Installer netcat (version correcte)
-RUN apt-get update && apt-get install -y netcat-openbsd
+# Installer le client mysql pour la commande `mysql -e`
+RUN apt-get update && apt-get install -y mysql-client
 
 COPY --from=build /app/target/GestionUser-0.0.1-SNAPSHOT.war app.war
-COPY wait-for-it.sh .
-RUN chmod +x wait-for-it.sh
+COPY wait-for-jdbc.sh .
+RUN chmod +x wait-for-jdbc.sh
 
-# Attendre que MySQL soit prêt avant de lancer l'app
-CMD ["./wait-for-it.sh", "mysql:3306", "--", "java", "-jar", "app.war"]
+CMD ["sh", "./wait-for-jdbc.sh"]
+
