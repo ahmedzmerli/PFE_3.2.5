@@ -81,3 +81,8 @@ services:
 volumes:
   mysql-data:
   nexus-data:
+
+networks:
+  default:
+    name: pfe_325_default
+    driver: bridge
