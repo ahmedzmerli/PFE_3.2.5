@@ -76,6 +76,15 @@ jobs:
       - name: Build and tag frontend image
         run: docker build -t ahmedzmerli/angular ./GestionUserDIM2
 
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+
+
+
       - name: Push backend image to Docker Hub
         run: docker push ahmedzmerli/spring
 
@@ -85,24 +94,4 @@ jobs:
       - name: Run backend and frontend services
         run: docker-compose -f docker-compose.yml up -d
 
-  launch-and-deploy-to-nexus:
-    name: Launch Tools & Deploy Snapshot to Nexus
-    runs-on: self-hosted
-    needs: docker-build-push-run
-
-    steps:
-      - name: Start Nexus, Prometheus, Grafana
-        run: |
-          docker run -d --name nexus -p 8085:8081 sonatype/nexus3
-          docker run -d --name prometheus -p 9090:9090 prom/prometheus
-          docker run -d --name grafana -p 3000:3000 grafana/grafana
-          echo "🕐 Waiting for Nexus to start..."
-          timeout 90 ping 127.0.0.1 >nul
-
-      - name: Build and Deploy Snapshot to Nexus
-        shell: cmd
-        run: |
-          cd GestionUser
-          mvn clean deploy -DaltDeploymentRepository=nexus::default::http://localhost:8085/repository/maven-snapshots-DIMII/
-
-      
+  
