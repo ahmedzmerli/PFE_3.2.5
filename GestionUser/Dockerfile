@@ -12,12 +12,10 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-# Installer le client mysql pour la commande `mysql -e`
-RUN apt-get update && apt-get install -y mysql-client
+RUN apt-get update && apt-get install -y mysql-client netcat-openbsd && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /app/target/GestionUser-0.0.1-SNAPSHOT.war app.war
 COPY wait-for-jdbc.sh .
 RUN chmod +x wait-for-jdbc.sh
 
 CMD ["sh", "./wait-for-jdbc.sh"]
-
