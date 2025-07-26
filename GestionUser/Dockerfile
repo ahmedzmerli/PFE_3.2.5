@@ -14,5 +14,5 @@ WORKDIR /app
 
 COPY --from=build /app/target/GestionUser-0.0.1-SNAPSHOT.war app.war
 
-# Lancer directement Spring Boot
-CMD ["java", "-jar", "app.war"]
+# Attendre que MySQL soit pret avant de lancer l'application
+CMD ["sh", "-c", "echo 'Attente de MySQL pendant 60 secondes...' && sleep 60 && java -jar app.war"]
