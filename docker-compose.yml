@@ -7,17 +7,21 @@ services:
     restart: always
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_ROOT_PASSWORD:
+      MYSQL_ROOT_PASSWORD: ""
       MYSQL_DATABASE: GestionUser
     ports:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
+      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root" ]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
+      start_period: 30s
+    networks:
+      - pfe_325_network
 
   backend:
     build:
@@ -37,6 +41,8 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - pfe_325_network
 
   frontend:
     build:
@@ -47,6 +53,8 @@ services:
       - "4200:80"
     depends_on:
       - backend
+    networks:
+      - pfe_325_network
 
   prometheus:
     image: prom/prometheus
@@ -57,6 +65,8 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     depends_on:
       - backend
+    networks:
+      - pfe_325_network
 
   grafana:
     image: grafana/grafana
@@ -65,7 +75,9 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
-  
+    networks:
+      - pfe_325_network
+
   nexus:
     image: sonatype/nexus3
     container_name: nexus
@@ -74,15 +86,14 @@ services:
     volumes:
       - nexus-data:/nexus-data
     restart: unless-stopped
-
-  
-
+    networks:
+      - pfe_325_network
 
 volumes:
   mysql-data:
   nexus-data:
 
+
 networks:
-  default:
-    name: pfe_325_default
+  pfe_325_network:
     driver: bridge

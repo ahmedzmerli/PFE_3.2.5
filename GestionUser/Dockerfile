@@ -18,4 +18,5 @@ RUN tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz && rm docker
 COPY --from=build /app/target/GestionUser-0.0.1-SNAPSHOT.war app.war
 
 # Start app after waiting for MySQL
-CMD ["dockerize", "-wait", "tcp://mysql:3306", "-timeout", "60s", "java", "-jar", "app.war"]
+CMD ["sh", "-c", "ping -c 3 mysql && dockerize -wait tcp://mysql:3306 -timeout 120s java -jar app.war"]
+
