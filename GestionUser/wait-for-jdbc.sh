@@ -40,4 +40,4 @@ if [ $RETRIES -eq 0 ]; then
 fi
 
 echo "✅ MySQL is ready and GestionUser database exists. Starting Spring Boot application..."
-exec java -jar app.war
+exec java -jar app.jar
