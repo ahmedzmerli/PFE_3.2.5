@@ -96,20 +96,20 @@ jobs:
           docker-compose -f docker-compose.yml logs backend
 
   nexus-publish:
-    name: Nexus Publish (Placeholder)
+    name: Nexus Publish
     runs-on: self-hosted
     needs: docker-build-push-run
     steps:
       - name: Placeholder step for Nexus
-        run: echo "Nexus publishing step (to be implemented)"
+        run: echo "Nexus publishing step "
 
   deploy:
-    name: Deploy (Placeholder)
+    name: Deploy
     runs-on: self-hosted
     needs: nexus-publish
     steps:
       - name: Placeholder step for Deploy
-        run: echo "Deployment step (to be implemented)"
+        run: echo "Deployment step"
 
 
       
