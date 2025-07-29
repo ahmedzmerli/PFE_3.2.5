@@ -59,41 +59,66 @@ jobs:
   #       shell: cmd
   #       run: |
   #         cd GestionUser && mvn verify sonar:sonar -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 -Dsonar.organization=ahmedzmerli -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
-  docker-build-push-run:
-    name: Docker Build, Push, and Compose Up
-    runs-on: self-hosted
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+ docker-build-push-run:
+  name: Docker Build, Push, and Compose Up
+  runs-on: self-hosted
 
-      - name: Build and tag backend image
-        run: docker build -t ahmedzmerli/spring ./GestionUser
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      - name: Build and tag frontend image
-        run: docker build -t ahmedzmerli/angular ./GestionUserDIM2
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USER }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
+    - name: Build and tag backend image
+      run: docker build -t ahmedzmerli/spring ./GestionUser
 
-      - name: Push backend image to Docker Hub
-        run: docker push ahmedzmerli/spring
+    - name: Build and tag frontend image
+      run: docker build -t ahmedzmerli/angular ./GestionUserDIM2
 
-      - name: Push frontend image to Docker Hub
-        run: docker push ahmedzmerli/angular
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKER_USER }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Run Docker Compose
-        run: |
-          docker-compose -f docker-compose.yml up -d
-          sleep 120  # Wait for containers to stabilize
-          docker-compose -f docker-compose.yml logs mysql
-          docker-compose -f docker-compose.yml logs backend
+    - name: Push backend image to Docker Hub
+      run: docker push ahmedzmerli/spring
+
+    - name: Push frontend image to Docker Hub
+      run: docker push ahmedzmerli/angular
+
+    - name: Run Docker Compose
+      run: |
+        echo "🚀 Lancement de docker-compose..."
+        docker-compose -f docker-compose.yml up -d
+
+        echo "⏳ Pause de 60 secondes pour stabilisation (MySQL, Backend, etc.)..."
+        sleep 60
+
+    - name: Check running containers
+      run: |
+        echo "📦 Conteneurs actifs :"
+        docker ps -a
+
+    - name: Logs - MySQL
+      run: |
+        echo "📝 Logs MySQL :"
+        docker logs mysql || true
+
+    - name: Logs - Backend
+      run: |
+        echo "📝 Logs Spring Boot :"
+        docker logs springboot || true
+
+    - name: Logs - Frontend
+      run: |
+        echo "📝 Logs Frontend :"
+        docker logs frontend || true
+
+  
 
   # trivy-scan:
   #   name: Trivy Security Scan
