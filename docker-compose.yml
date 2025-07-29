@@ -13,7 +13,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql-data:/var/lib/mysql
-      - ./mysql.cnf:/etc/mysql/conf.d/mysql.cnf
+      - ./mysql.cng:/etc/mysql/conf.d/mysql.cnf
     healthcheck:
       test: [ "CMD", "mysql", "-h", "mysql", "-u", "root", "-e", "SELECT 1 FROM dual;" ]
       interval: 10s
