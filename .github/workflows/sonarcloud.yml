@@ -95,21 +95,25 @@ jobs:
           docker-compose -f docker-compose.yml logs mysql
           docker-compose -f docker-compose.yml logs backend
 
-  nexus-publish:
-    name: Nexus Publish
+  trivy-scan:
+    name: Trivy Security Scan
     runs-on: self-hosted
     needs: docker-build-push-run
-    steps:
-      - name: Placeholder step for Nexus
-        run: echo "Nexus publishing step "
 
-  # deploy:
-  #   name: Deploy
-  #   runs-on: self-hosted
-  #   needs: nexus-publish
-  #   steps:
-  #     - name: Placeholder step for Deploy
-  #       run: echo "Deployment step"
+    steps:
+      - name: Install Trivy
+        run: |
+          apt-get update && apt-get install -y wget
+          wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_Linux-64bit.tar.gz | tar zxvf - -C /usr/local/bin
+
+      - name: Scan backend image
+        run: |
+          trivy image --exit-code 1 --severity HIGH,CRITICAL ahmedzmerli/spring || echo "Backend image has vulnerabilities"
+
+      - name: Scan frontend image
+        run: |
+          trivy image --exit-code 1 --severity HIGH,CRITICAL ahmedzmerli/angular || echo "Frontend image has vulnerabilities"
+
 
 
       
