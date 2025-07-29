@@ -103,13 +103,13 @@ jobs:
       - name: Placeholder step for Nexus
         run: echo "Nexus publishing step "
 
-  deploy:
-    name: Deploy
-    runs-on: self-hosted
-    needs: nexus-publish
-    steps:
-      - name: Placeholder step for Deploy
-        run: echo "Deployment step"
+  # deploy:
+  #   name: Deploy
+  #   runs-on: self-hosted
+  #   needs: nexus-publish
+  #   steps:
+  #     - name: Placeholder step for Deploy
+  #       run: echo "Deployment step"
 
 
       
