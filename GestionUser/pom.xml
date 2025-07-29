@@ -17,7 +17,8 @@
 	<groupId>com.example</groupId>
 	<artifactId>GestionUser</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+<!--	<packaging>war</packaging>-->
+	<packaging>jar</packaging>
 	<name>GestionUser</name>
 	<description>GestionUser</description>
 	<url/>
@@ -254,7 +255,7 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>nexus</id>
-			<url>http://localhost:8085/repository/maven-snapshots-DIMII/</url>
+			<url>http://localhost:8085/repository/maven-snapshots/</url>
 		</snapshotRepository>
 	</distributionManagement>
 

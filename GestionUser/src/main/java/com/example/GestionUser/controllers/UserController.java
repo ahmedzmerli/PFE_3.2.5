@@ -1,5 +1,6 @@
 package com.example.GestionUser.controllers;
 
+import com.example.GestionUser.auth.AdminChangePasswordRequest;
 import com.example.GestionUser.auth.AuthenticationService;
 import com.example.GestionUser.auth.RegistrationRequest;
 import com.example.GestionUser.entities.Role;
@@ -169,6 +170,18 @@ public ResponseEntity<Set<Role>> getUserRoles(@PathVariable Integer id) {
         .orElseThrow(() -> new ResourceNotFoundException("Utilisateur", id));
     return ResponseEntity.ok(user.getRoles());
 }
+
+
+    @PutMapping("/users/{id}/change-password")
+    @PreAuthorize("hasAuthority('users.update')")
+    public ResponseEntity<?> changePasswordAsAdmin(
+            @PathVariable Integer id,
+            @RequestBody @Valid AdminChangePasswordRequest request
+    ) {
+        authService.changeUserPasswordAsAdmin(id, request);
+        return ResponseEntity.ok(Map.of("message", "Mot de passe de l'utilisateur mis à jour avec succès."));
+    }
+
 
 
 

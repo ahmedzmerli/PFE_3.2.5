@@ -90,6 +90,12 @@ export class AppMenu implements OnInit {
             icon: 'pi pi-chart-line',
             routerLink: ['/stats'],
             visible: permissions.includes('dashboard.read')
+          },
+          {
+            label: 'Forum',
+            icon: 'pi pi-chart-line',
+            routerLink: ['/chat'],
+            visible: permissions.includes('dashboard.read')
           }
         ]
       }
