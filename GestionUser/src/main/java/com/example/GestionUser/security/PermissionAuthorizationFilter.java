@@ -38,28 +38,30 @@ public class PermissionAuthorizationFilter extends OncePerRequestFilter {
         if (
                 fullPath.equals("/") ||
                         fullPath.equals("/error") ||
-                        fullPath.equals("/favicon.ico") ||
-                        fullPath.equals("/index.html") ||
-                        fullPath.matches(".*\\.(js|css|png|jpg|jpeg|svg|ico|woff2)$") ||
-                        fullPath.startsWith("/assets/") ||
-                        fullPath.startsWith("/static/") ||
+
+                        // ✅ Autoriser tous les fichiers statiques d'Angular avec /CTI-Tool/
+                        fullPath.startsWith("/CTI-Tool/") ||
+                        fullPath.matches(".*\\.(js|css|png|jpg|jpeg|svg|ico|woff2|map)$") ||
+
+                        // ✅ Angular API publiques
+                        fullPath.startsWith("/api/v1/auth") ||
+                        fullPath.startsWith("/api/v1/fix-admin") ||
+                        fullPath.startsWith("/api/v1/permissions") ||
+
+                        // ✅ WebSocket / Monitoring / Swagger
                         fullPath.startsWith("/ws") ||
                         fullPath.startsWith("/topic") ||
                         fullPath.startsWith("/sockjs-node") ||
-                        fullPath.startsWith("/app") || // STOMP app prefix
-
-                        fullPath.equals("/api/v1/auth/authenticate") ||
-                        fullPath.equals("/api/v1/auth/activate-account") ||
-                        fullPath.equals("/api/v1/auth/change-password") ||
-                        fullPath.equals("/api/v1/auth/register") ||// 👈 sinon elle absorbe tout
-                        fullPath.startsWith("/api/v1/permissions") ||
-                        fullPath.startsWith("/api/v1/fix-admin") ||
-                        fullPath.startsWith("/actuator")
-
+                        fullPath.startsWith("/app") ||
+                        fullPath.startsWith("/actuator") ||
+                        fullPath.startsWith("/swagger") ||
+                        fullPath.startsWith("/v3/api-docs") ||
+                        fullPath.startsWith("/webjars")
         ) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 

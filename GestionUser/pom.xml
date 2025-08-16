@@ -15,10 +15,10 @@
 	</parent>
 
 	<groupId>com.example</groupId>
-	<artifactId>GestionUser</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-<!--	<packaging>war</packaging>-->
-	<packaging>jar</packaging>
+	<artifactId>CTI-Tool</artifactId>
+<!--	<version>0.0.1-SNAPSHOT</version>-->
+	<packaging>war</packaging>
+<!--	<packaging>jar</packaging>-->
 	<name>GestionUser</name>
 	<description>GestionUser</description>
 	<url/>
@@ -194,6 +194,8 @@
 	</dependencies>
 
 	<build>
+
+		<finalName>CTI-Tool</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>

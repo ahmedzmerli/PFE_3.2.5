@@ -38,6 +38,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(
+                                "/CTI-Tool/**",
                                 "/", "/error",
                                 /*"/auth/**",
                                 "/api/v1/auth/**",*/
