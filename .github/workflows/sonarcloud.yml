@@ -74,10 +74,14 @@ jobs:
 
     # Build images
     - name: Build backend image
-      run: docker build -t ahmedzmerli/spring ./GestionUser
+      shell: pwsh
+      run: |
+        docker build -t ahmedzmerli/spring ./GestionUser
 
     - name: Build frontend image
-      run: docker build -t ahmedzmerli/angular ./GestionUserDIM2
+      shell: pwsh
+      run: |
+        docker build -t ahmedzmerli/angular ./GestionUserDIM2
 
     # Login Docker Hub
     - name: Log in to Docker Hub
@@ -88,53 +92,68 @@ jobs:
 
     # Push images
     - name: Push backend image
+      shell: pwsh
       run: docker push ahmedzmerli/spring
 
     - name: Push frontend image
+      shell: pwsh
       run: docker push ahmedzmerli/angular
 
-    # Clean previous stack
+    # Clean previous stack (ignore errors, PowerShell style)
     - name: Reset previous stack
+      shell: pwsh
       run: |
-        docker compose -f docker-compose.yml down -v --remove-orphans || true
-        docker system prune -f || true
+        docker compose -f docker-compose.yml down -v --remove-orphans
+        if ($LASTEXITCODE -ne 0) { Write-Host "Ignoring error from compose down"; $global:LASTEXITCODE = 0 }
+        docker system prune -f
+        if ($LASTEXITCODE -ne 0) { Write-Host "Ignoring error from system prune"; $global:LASTEXITCODE = 0 }
 
     # Launch docker-compose
     - name: Run Docker Compose
+      shell: pwsh
       run: |
         echo "🚀 Lancement de docker compose..."
         docker compose -f docker-compose.yml up -d --build
         echo "⏳ Pause de 60 secondes pour stabilisation (MySQL, Backend, etc.)..."
-        sleep 60
+        Start-Sleep -Seconds 60
 
     # Show running containers
     - name: Check running containers
+      shell: pwsh
       run: docker compose -f docker-compose.yml ps
 
     # Logs MySQL
     - name: Logs - MySQL
+      shell: pwsh
+      continue-on-error: true
       run: |
         echo "📝 Logs MySQL :"
-        docker compose -f docker-compose.yml logs mysql --tail=100 || true
+        docker compose -f docker-compose.yml logs mysql --tail=100
 
-    # Logs Backend
+    # Logs Backend (service = springboot)
     - name: Logs - Backend
+      shell: pwsh
+      continue-on-error: true
       run: |
         echo "📝 Logs Spring Boot :"
-        docker compose -f docker-compose.yml logs backend --tail=100 || true
+        docker compose -f docker-compose.yml logs springboot --tail=100
 
-    # Logs Frontend
+    # Logs Frontend (service = angular)
     - name: Logs - Frontend
+      shell: pwsh
+      continue-on-error: true
       run: |
         echo "📝 Logs Frontend :"
-        docker compose -f docker-compose.yml logs frontend --tail=100 || true
+        docker compose -f docker-compose.yml logs angular --tail=100
 
     # Quick DB sanity check
     - name: Check databases
+      shell: pwsh
+      continue-on-error: true
       run: |
-        MYSQL_CID=$(docker ps --filter "ancestor=mysql:8.0" --format "{{.ID}}" | head -n1)
-        echo "👉 Bases présentes :"
-        docker exec "$MYSQL_CID" mysql -uroot -e "SHOW DATABASES;"
+        echo "👉 Bases présentes (via docker compose exec) :"
+        docker compose -f docker-compose.yml exec -T mysql mysql -uroot -e "SHOW DATABASES;"
+
 
   
 
