@@ -74,12 +74,12 @@ jobs:
 
     # Build images
     - name: Build backend image
-      shell: pwsh
+      shell: powershell
       run: |
         docker build -t ahmedzmerli/spring ./GestionUser
 
     - name: Build frontend image
-      shell: pwsh
+      shell: powershell
       run: |
         docker build -t ahmedzmerli/angular ./GestionUserDIM2
 
@@ -92,16 +92,16 @@ jobs:
 
     # Push images
     - name: Push backend image
-      shell: pwsh
+      shell: powershell
       run: docker push ahmedzmerli/spring
 
     - name: Push frontend image
-      shell: pwsh
+      shell: powershell
       run: docker push ahmedzmerli/angular
 
     # Clean previous stack (ignore errors, PowerShell style)
     - name: Reset previous stack
-      shell: pwsh
+      shell: powershell
       run: |
         docker compose -f docker-compose.yml down -v --remove-orphans
         if ($LASTEXITCODE -ne 0) { Write-Host "Ignoring error from compose down"; $global:LASTEXITCODE = 0 }
@@ -110,7 +110,7 @@ jobs:
 
     # Launch docker-compose
     - name: Run Docker Compose
-      shell: pwsh
+      shell: powershell
       run: |
         echo "🚀 Lancement de docker compose..."
         docker compose -f docker-compose.yml up -d --build
@@ -119,12 +119,12 @@ jobs:
 
     # Show running containers
     - name: Check running containers
-      shell: pwsh
+      shell: powershell
       run: docker compose -f docker-compose.yml ps
 
     # Logs MySQL
     - name: Logs - MySQL
-      shell: pwsh
+      shell: powershell
       continue-on-error: true
       run: |
         echo "📝 Logs MySQL :"
@@ -132,7 +132,7 @@ jobs:
 
     # Logs Backend (service = springboot)
     - name: Logs - Backend
-      shell: pwsh
+      shell: powershell
       continue-on-error: true
       run: |
         echo "📝 Logs Spring Boot :"
@@ -140,7 +140,7 @@ jobs:
 
     # Logs Frontend (service = angular)
     - name: Logs - Frontend
-      shell: pwsh
+      shell: powershell
       continue-on-error: true
       run: |
         echo "📝 Logs Frontend :"
@@ -148,7 +148,7 @@ jobs:
 
     # Quick DB sanity check
     - name: Check databases
-      shell: pwsh
+      shell: powershell
       continue-on-error: true
       run: |
         echo "👉 Bases présentes (via docker compose exec) :"
