@@ -17,8 +17,8 @@
 	<groupId>com.example</groupId>
 	<artifactId>CTI-Tool</artifactId>
 <!--	<version>0.0.1-SNAPSHOT</version>-->
-	<packaging>war</packaging>
-<!--	<packaging>jar</packaging>-->
+<!--	<packaging>war</packaging>-->
+	<packaging>jar</packaging>
 	<name>GestionUser</name>
 	<description>GestionUser</description>
 	<url/>
@@ -84,11 +84,11 @@
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-tomcat</artifactId>
-			<scope>provided</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>org.springframework.boot</groupId>-->
+<!--			<artifactId>spring-boot-starter-tomcat</artifactId>-->
+<!--			<scope>provided</scope>-->
+<!--		</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
@@ -227,6 +227,14 @@
 						</exclude>
 					</excludes>
 				</configuration>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>repackage</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 
 
