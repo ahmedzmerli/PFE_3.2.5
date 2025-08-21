@@ -1,181 +1,186 @@
-name: CI/CD Pipeline - Build, Test, SonarQube, Docker, Nexus
+name: CI/CD Pipeline - Build, Test, SonarQube, Docker, Trivy, Nexus
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
   pull_request:
     types: [opened, synchronize, reopened]
 
 jobs:
-  # build-test:
-  #   name: Build and Test
-  #   runs-on: self-hosted
+  build-test:
+    name: Build and Test
+    runs-on: self-hosted
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Set up JDK 17
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         distribution: temurin
-  #         java-version: 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: 'maven'
 
-  #     - name: Cache Maven packages
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.m2/repository
-  #         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: ${{ runner.os }}-maven-
+      - name: Build and run unit tests
+        run: |
+          cd GestionUser
+          mvn -B clean test
 
-  #     - name: Build and run unit tests
-  #       shell: cmd
-  #       run: |
-  #         cd GestionUser && mvn clean test
-  # sonarqube-analysis:
-  #   name: SonarQube Analysis
-  #   runs-on: self-hosted
-  #   needs: build-test
+  sonarqube-analysis:
+    name: SonarQube Analysis
+    runs-on: self-hosted
+    needs: build-test
 
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #     - name: Set up JDK 17
-  #       uses: actions/setup-java@v4
-  #       with:
-  #         distribution: temurin
-  #         java-version: 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: 'maven'
 
-  #     - name: Cache Maven packages
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: ~/.m2/repository
-  #         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-  #         restore-keys: ${{ runner.os }}-maven-
+      - name: SonarQube Scan
+        run: |
+          cd GestionUser
+          mvn -B verify sonar:sonar \
+            -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 \
+            -Dsonar.organization=ahmedzmerli \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
-  #     - name: SonarQube Scan
-  #       shell: cmd
-  #       run: |
-  #         cd GestionUser && mvn verify sonar:sonar -Dsonar.projectKey=ahmedzmerli_PFE_3.2.5 -Dsonar.organization=ahmedzmerli -Dsonar.host.url=https://sonarcloud.io -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+  docker-build-push-run:
+    name: Docker Build, Push, Compose Up
+    runs-on: self-hosted
+    needs: sonarqube-analysis
 
+    env:
+      BACKEND_IMAGE: ahmedzmerli/spring
+      FRONTEND_IMAGE: ahmedzmerli/angular
+      IMAGE_TAG: ${{ github.sha }}
 
- docker-build-push-run:
-  name: Docker Build, Push, and Compose Up
-  runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-  steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      # Build images
+      - name: Build backend image
+        run: |
+          docker build -t $BACKEND_IMAGE:latest -t $BACKEND_IMAGE:$IMAGE_TAG ./GestionUser
 
-    # Build images
-    - name: Build backend image
-      shell: powershell
-      run: |
-        docker build -t ahmedzmerli/spring ./GestionUser
+      - name: Build frontend image
+        run: |
+          docker build -t $FRONTEND_IMAGE:latest -t $FRONTEND_IMAGE:$IMAGE_TAG ./GestionUserDIM2
 
-    - name: Build frontend image
-      shell: powershell
-      run: |
-        docker build -t ahmedzmerli/angular ./GestionUserDIM2
+      # Login Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USER }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
 
-    # Login Docker Hub
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USER }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      # Push images
+      - name: Push backend image
+        run: |
+          docker push $BACKEND_IMAGE:latest
+          docker push $BACKEND_IMAGE:$IMAGE_TAG
 
-    # Push images
-    - name: Push backend image
-      shell: powershell
-      run: docker push ahmedzmerli/spring
+      - name: Push frontend image
+        run: |
+          docker push $FRONTEND_IMAGE:latest
+          docker push $FRONTEND_IMAGE:$IMAGE_TAG
 
-    - name: Push frontend image
-      shell: powershell
-      run: docker push ahmedzmerli/angular
+      # Reset previous stack
+      - name: Reset previous stack
+        run: |
+          docker compose -f docker-compose.yml down -v --remove-orphans || true
+          docker system prune -f || true
 
-    # Clean previous stack (ignore errors, PowerShell style)
-    - name: Reset previous stack
-      shell: powershell
-      run: |
-        docker compose -f docker-compose.yml down -v --remove-orphans
-        if ($LASTEXITCODE -ne 0) { Write-Host "Ignoring error from compose down"; $global:LASTEXITCODE = 0 }
-        docker system prune -f
-        if ($LASTEXITCODE -ne 0) { Write-Host "Ignoring error from system prune"; $global:LASTEXITCODE = 0 }
+      # Launch docker-compose
+      - name: Run Docker Compose
+        run: |
+          echo "🚀 Lancement de docker compose..."
+          docker compose -f docker-compose.yml up -d --build
+          echo "⏳ Attente 60s (MySQL, backend)..."
+          sleep 60
 
-    # Launch docker-compose
-    - name: Run Docker Compose
-      shell: powershell
-      run: |
-        echo "🚀 Lancement de docker compose..."
-        docker compose -f docker-compose.yml up -d --build
-        echo "⏳ Pause de 60 secondes pour stabilisation (MySQL, Backend, etc.)..."
-        Start-Sleep -Seconds 60
+      - name: Show running containers
+        run: docker compose -f docker-compose.yml ps
 
-    # Show running containers
-    - name: Check running containers
-      shell: powershell
-      run: docker compose -f docker-compose.yml ps
+      - name: Quick DB sanity check
+        continue-on-error: true
+        run: |
+          echo "👉 Bases présentes :"
+          docker compose -f docker-compose.yml exec -T mysql mysql -uroot -e "SHOW DATABASES;"
 
-    # Logs MySQL
-    - name: Logs - MySQL
-      shell: powershell
-      continue-on-error: true
-      run: |
-        echo "📝 Logs MySQL :"
-        docker compose -f docker-compose.yml logs mysql --tail=100
+  trivy-scan:
+    name: Trivy Security Scan
+    runs-on: self-hosted
+    needs: docker-build-push-run
 
-    # Logs Backend (service = springboot)
-    - name: Logs - Backend
-      shell: powershell
-      continue-on-error: true
-      run: |
-        echo "📝 Logs Spring Boot :"
-        docker compose -f docker-compose.yml logs springboot --tail=100
+    env:
+      BACKEND_IMAGE: ahmedzmerli/spring
+      FRONTEND_IMAGE: ahmedzmerli/angular
 
-    # Logs Frontend (service = angular)
-    - name: Logs - Frontend
-      shell: powershell
-      continue-on-error: true
-      run: |
-        echo "📝 Logs Frontend :"
-        docker compose -f docker-compose.yml logs angular --tail=100
+    steps:
+      - name: Trivy Scan - Backend
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.BACKEND_IMAGE }}:latest
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
 
-    # Quick DB sanity check
-    - name: Check databases
-      shell: powershell
-      continue-on-error: true
-      run: |
-        echo "👉 Bases présentes (via docker compose exec) :"
-        docker compose -f docker-compose.yml exec -T mysql mysql -uroot -e "SHOW DATABASES;"
+      - name: Trivy Scan - Frontend
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.FRONTEND_IMAGE }}:latest
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
 
+  nexus-deploy:
+    name: Deploy JAR to Nexus
+    runs-on: self-hosted
+    needs: trivy-scan
 
-  
+    env:
+      NEXUS_BASE_URL: http://localhost:8085   # Port host mappé sur 8085
+      NEXUS_SERVER_ID: nexus                  # doit matcher <id> dans ton pom.xml
 
-  # trivy-scan:
-  #   name: Trivy Security Scan
-  #   runs-on: self-hosted
-  #   needs: docker-build-push-run
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-  #   steps:
-  #     - name: Install Trivy
-  #       run: |
-  #         apt-get update && apt-get install -y wget
-  #         wget -qO- https://github.com/aquasecurity/trivy/releases/latest/download/trivy_0.50.1_Linux-64bit.tar.gz | tar zxvf - -C /usr/local/bin
+      - name: Wait for Nexus
+        run: |
+          for i in {1..60}; do
+            if curl -s -o /dev/null -w "%{http_code}" $NEXUS_BASE_URL/service/rest/v1/status | grep -q "200"; then
+              echo "✅ Nexus ready"; break
+            fi
+            echo "⌛ Nexus pas encore prêt ($i/60)..."
+            sleep 5
+          done
 
-  #     - name: Scan backend image
-  #       run: |
-  #         trivy image --exit-code 1 --severity HIGH,CRITICAL ahmedzmerli/spring || echo "Backend image has vulnerabilities"
+      - name: Set up JDK 17 for Maven deploy
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+          cache: 'maven'
+          server-id: ${{ env.NEXUS_SERVER_ID }}
+          server-username: ${{ secrets.NEXUS_USER }}
+          server-password: ${{ secrets.NEXUS_PASS }}
 
-  #     - name: Scan frontend image
-  #       run: |
-  #         trivy image --exit-code 1 --severity HIGH,CRITICAL ahmedzmerli/angular || echo "Frontend image has vulnerabilities"
-
-
-
-      
+      - name: Maven deploy to Nexus
+        run: |
+          cd GestionUser
+          mvn -B -DskipTests clean deploy
