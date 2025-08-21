@@ -177,8 +177,8 @@ jobs:
           java-version: 17
           cache: 'maven'
           server-id: ${{ env.NEXUS_SERVER_ID }}
-          server-username: ${{ secrets.NEXUS_USER }}
-          server-password: ${{ secrets.NEXUS_PASS }}
+          server-username: ${{ secrets.NEXUS_USERNAME }}
+          server-password: ${{ secrets.NEXUS_PASSWORD }}
 
       - name: Maven deploy to Nexus
         run: |
