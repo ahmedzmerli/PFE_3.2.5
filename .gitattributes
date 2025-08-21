@@ -1,0 +1,13 @@
+* text=auto
+
+# Scripts : toujours LF
+*.sh text eol=lf
+
+# Docker / Compose
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Configs Java/Spring
+*.properties text eol=lf
+*.sql text eol=lf
