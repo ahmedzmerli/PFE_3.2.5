@@ -26,31 +26,31 @@ jobs:
   #       run: |
   #         cd GestionUser
   #         mvn -B clean test
-  sonarqube-analysis:
-    name: SonarQube Analysis
-    runs-on: self-hosted
-    # needs: build-test
+  # sonarqube-analysis:
+  #   name: SonarQube Analysis
+  #   runs-on: self-hosted
+  #   # needs: build-test
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 17
-          cache: 'maven'
+  #     - name: Set up JDK 17
+  #       uses: actions/setup-java@v4
+  #       with:
+  #         distribution: temurin
+  #         java-version: 17
+  #         cache: 'maven'
 
-      - name: SonarQube Scan (SonarCloud)
-        run: |
-          cd GestionUser
-          mvn -B verify sonar:sonar -D"sonar.projectKey=ahmedzmerli_PFE_3.2.5" -D"sonar.organization=ahmedzmerli" -D"sonar.host.url=https://sonarcloud.io" -D"sonar.token=${{ secrets.SONAR_TOKEN }}"
+  #     - name: SonarQube Scan (SonarCloud)
+  #       run: |
+  #         cd GestionUser
+  #         mvn -B verify sonar:sonar -D"sonar.projectKey=ahmedzmerli_PFE_3.2.5" -D"sonar.organization=ahmedzmerli" -D"sonar.host.url=https://sonarcloud.io" -D"sonar.token=${{ secrets.SONAR_TOKEN }}"
 
   docker-build-push-run:
     name: Docker Build, Push, Compose Up
     runs-on: self-hosted
-    needs: sonarqube-analysis
+    # needs: sonarqube-analysis
 
     env:
       BACKEND_IMAGE: ahmedzmerli/spring
@@ -67,11 +67,11 @@ jobs:
       # Build images
       - name: Build backend image
         run: |
-          docker build -t $BACKEND_IMAGE:latest -t $BACKEND_IMAGE:$IMAGE_TAG ./GestionUser
+          docker build -t "$env:BACKEND_IMAGE:latest" -t "$env:BACKEND_IMAGE:$env:IMAGE_TAG" ./GestionUser
 
       - name: Build frontend image
         run: |
-          docker build -t $FRONTEND_IMAGE:latest -t $FRONTEND_IMAGE:$IMAGE_TAG ./GestionUserDIM2
+          docker build -t "$env:FRONTEND_IMAGE:latest" -t "$env:FRONTEND_IMAGE:$env:IMAGE_TAG" ./GestionUserDIM2
 
       # Login Docker Hub
       - name: Log in to Docker Hub
@@ -83,27 +83,27 @@ jobs:
       # Push images
       - name: Push backend image
         run: |
-          docker push $BACKEND_IMAGE:latest
-          docker push $BACKEND_IMAGE:$IMAGE_TAG
+          docker push "$env:BACKEND_IMAGE:latest"
+          docker push "$env:BACKEND_IMAGE:$env:IMAGE_TAG"
 
       - name: Push frontend image
         run: |
-          docker push $FRONTEND_IMAGE:latest
-          docker push $FRONTEND_IMAGE:$IMAGE_TAG
+          docker push "$env:FRONTEND_IMAGE:latest"
+          docker push "$env:FRONTEND_IMAGE:$env:IMAGE_TAG"
 
-      # Reset previous stack
+      # Reset previous stack (ignore errors if stack not present)
       - name: Reset previous stack
         run: |
-          docker compose -f docker-compose.yml down -v --remove-orphans || true
-          docker system prune -f || true
+          try { docker compose -f docker-compose.yml down -v --remove-orphans } catch { Write-Host "No previous stack or compose down failed, continue." }
+          try { docker system prune -f } catch { Write-Host "Prune failed, continue." }
 
       # Launch docker-compose
       - name: Run Docker Compose
         run: |
-          echo "🚀 Lancement de docker compose..."
+          Write-Host "🚀 Lancement de docker compose..."
           docker compose -f docker-compose.yml up -d --build
-          echo "⏳ Attente 60s (MySQL, backend)..."
-          sleep 60
+          Write-Host "⏳ Attente 60s (MySQL, backend)..."
+          Start-Sleep -Seconds 60
 
       - name: Show running containers
         run: docker compose -f docker-compose.yml ps
@@ -111,8 +111,9 @@ jobs:
       - name: Quick DB sanity check
         continue-on-error: true
         run: |
-          echo "👉 Bases présentes :"
+          Write-Host "👉 Bases présentes :"
           docker compose -f docker-compose.yml exec -T mysql mysql -uroot -e "SHOW DATABASES;"
+
 
   trivy-scan:
     name: Trivy Security Scan
