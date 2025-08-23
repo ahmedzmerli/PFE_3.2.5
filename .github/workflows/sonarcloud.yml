@@ -67,11 +67,12 @@ jobs:
       # Build images
       - name: Build backend image
         run: |
-          docker build -t "$env:BACKEND_IMAGE:latest" -t "$env:BACKEND_IMAGE:$env:IMAGE_TAG" ./GestionUser
+          docker build -t "$($env:BACKEND_IMAGE):latest" -t "$($env:BACKEND_IMAGE):$($env:IMAGE_TAG)" ./GestionUser
+
 
       - name: Build frontend image
         run: |
-          docker build -t "$env:FRONTEND_IMAGE:latest" -t "$env:FRONTEND_IMAGE:$env:IMAGE_TAG" ./GestionUserDIM2
+          docker build -t "$($env:FRONTEND_IMAGE):latest" -t "$($env:FRONTEND_IMAGE):$($env:IMAGE_TAG)" ./GestionUserDIM2
 
       # Login Docker Hub
       - name: Log in to Docker Hub
@@ -83,13 +84,13 @@ jobs:
       # Push images
       - name: Push backend image
         run: |
-          docker push "$env:BACKEND_IMAGE:latest"
-          docker push "$env:BACKEND_IMAGE:$env:IMAGE_TAG"
+          docker push "$($env:BACKEND_IMAGE):latest"
+          docker push "$($env:BACKEND_IMAGE):$($env:IMAGE_TAG)"
 
       - name: Push frontend image
         run: |
-          docker push "$env:FRONTEND_IMAGE:latest"
-          docker push "$env:FRONTEND_IMAGE:$env:IMAGE_TAG"
+          docker push "$($env:FRONTEND_IMAGE):latest"
+          docker push "$($env:FRONTEND_IMAGE):$($env:IMAGE_TAG)"
 
       # Reset previous stack (ignore errors if stack not present)
       - name: Reset previous stack
