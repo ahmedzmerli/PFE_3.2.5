@@ -119,7 +119,7 @@ jobs:
   trivy-scan:
     name: Trivy Security Scan (non-blockant)
     runs-on: ubuntu-latest
-    needs: docker-build-push-run
+    # needs: docker-build-push-run
 
     env:
       BACKEND_IMAGE: ahmedzmerli/spring
